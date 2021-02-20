@@ -1,5 +1,5 @@
 [package]
-name = "skilltree-ui"
+name = "skilltree-text"
 version = "0.1.0"
 authors = ["Davide Radaelli <daviderady@gmail.com>"]
 edition = "2018"
