@@ -1,22 +1,20 @@
-use rocket_contrib::templates::Template;
-use serde::Serialize;
+use rocket::Route;
+use rocket::response::status;
 
-#[get("/test")]
-fn index() -> Template {
-    #[derive(Serialize)]
-    struct Context {
-        title: String,
-    };
+#[post("/")]
+fn index() -> status::Accepted<String> {
+    status::Accepted(Some(format!("HELLO!")))
+}
 
-    let context = Context {
-        title: "TEST".to_string(),
-    };
-
-    Template::render("index", &context)
+#[post("/front-roll/<value>")]
+fn update(value: usize) -> status::Accepted<String> {
+    println!("{} saved to the database", value);
+    status::Accepted(Some(format!("value: {}", value)))
 }
 
 pub fn routes() -> Vec<Route> {
     routes![
         index,
+        update,
     ]
 }

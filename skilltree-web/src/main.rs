@@ -3,32 +3,24 @@
 #[macro_use]
 extern crate rocket;
 
-mod api;
 mod pages;
+mod api;
 
+use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
-use serde::Serialize;
 
 #[catch(404)]
 fn not_found() -> Template {
-    #[derive(Serialize)]
-    struct Context {
-        title: &'static str,
-        message: &'static str,
-    };
-
-    let context = Context {
-        title: "Unauthorized",
-        message: "The request resource could not be found.",
-    };
-
+    let context = ();
     Template::render("error", &context)
 }
 
 fn ignite() -> rocket::Rocket {
     rocket::ignite()
         .attach(Template::fairing())
+        .mount("/static", StaticFiles::from("static"))
         .mount("/", pages::routes())
+        .mount("/api", api::routes())
         .register(catchers![not_found])
 }
 
