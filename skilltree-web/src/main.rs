@@ -3,8 +3,8 @@
 #[macro_use]
 extern crate rocket;
 
-mod pages;
 mod api;
+mod pages;
 
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
@@ -25,5 +25,9 @@ fn ignite() -> rocket::Rocket {
 }
 
 fn main() {
+    let db = sled_extensions::Config::default()
+        .path("./database")
+        .open()
+        .expect("Failed to open sled DB");
     ignite().launch();
 }
