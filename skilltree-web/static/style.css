@@ -9,8 +9,23 @@ a {
     color: #007bff;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Corben', Georgia, Times, serif;
+}
+
+p, div, li {
+    font-family: 'Nobile', Helvetica, Arial, sans-serif;
+}
+
 header {
-    height: 10vh;
+    display: flex;
+    background: #e0e0e0;
+    padding: 0.8em;
+}
+
+header h5 {
+    padding-right: 2em;
+    font-size: 1.2em;
 }
 
 header ul {
@@ -19,26 +34,72 @@ header ul {
 }
 
 header ul li {
-    padding: 0.5em;
+    align-self: center;
+    padding: 0.6em;
+}
+
+header ul li a {
+    padding: 0.5;
+}
+
+body {
+    background: url(/static/img/cream_dust.png) repeat 0 0;
 }
 
 main {
-    height: 80vh;
+    overflow: hidden;
+}
+
+.container {
+    padding: 1em;
+}
+
+main h1 {
+    text-align: center;
+    padding: 1em;
+}
+
+main h5 {
+    padding-top: 2em;
+}
+
+main ul {
+    list-style: none;
+}
+
+main ul li {
+    padding-bottom: 1em;
+}
+
+main h3 {
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
 }
 
 .user-list li {
     padding-left: 1em;
 }
 
+svg {
+    width: 95vw;
+    background-color: rgba(255, 255, 255, 0) !important;
+}
+
 footer {
-    height: 10vh;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
 footer ul {
-    display: flex;
     list-style: none;
+    justify-content: space-evenly;
+    background: #e0e0e0;
+    padding: 0.5em;
+    font-size: 0.8em;
+    padding-left: 3em;
 }
 
 footer ul li {
-    padding: 0.5em;
+    padding: 0.2em;
 }

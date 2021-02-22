@@ -5,6 +5,7 @@ extern crate rocket;
 
 use rocket::response::status;
 use rocket::Route;
+use std::fs;
 use rocket::State;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
@@ -56,24 +57,22 @@ fn admin(db: State<Database>) -> Template {
 #[get("/<username>")]
 fn user(db: State<Database>, username: String) -> Template {
     let user = db.users.get(username.as_bytes()).unwrap().unwrap();
-    let value = user.skills["front-roll"];
-
-    #[derive(Serialize)]
-    struct Context {
-        username: String,
-        value: usize,
-    };
-    let context = Context { username, value };
-
-    Template::render("user", &context)
+    Template::render("user", &user)
 }
 
 #[post("/add-user/<username>")]
 fn add_user(db: State<Database>, username: String) -> status::Accepted<String> {
     let username = username.to_string();
     let mut skills = HashMap::new();
+
+    let skill_list: Vec<String> = fs::read_to_string("./src/skills").unwrap().split('\n').map(|x| x.to_string()).collect();
+    for skill in skill_list {
+        skills.insert(skill, 0);
+    }
     skills.insert("front-roll".to_string(), 0);
     let user = User { username: username.clone(), skills };
+    
+    dbg!(&user);
 
     db.users.insert(username.clone().as_bytes(), user).expect("Failed to insert user");
     status::Accepted(Some(format!("User {} added successfully", &username)))

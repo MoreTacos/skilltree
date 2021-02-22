@@ -1,4 +1,4 @@
- <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg
   xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@
       y="246.15"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.straightjump}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -53,18 +53,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Straight Jump
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/straightjump/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.straightjump}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -85,7 +78,7 @@
       y="135.38"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.frontroll}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -121,18 +114,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Front Roll
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/frontroll/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.frontroll}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -153,7 +139,7 @@
       y="86.15"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.backroll}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -189,18 +175,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Back Roll
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/backroll/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.backroll}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -235,7 +214,7 @@
       y="307.69"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.jumps}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -271,18 +250,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Jumps
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/jumps/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.jumps}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -317,7 +289,7 @@
       y="369.23"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.halfturn}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -353,18 +325,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Half Turn
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/halfturn/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.halfturn}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -399,7 +364,7 @@
       y="184.62"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.kicktohandstand}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -435,18 +400,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Kick To Handstand
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/kicktohandstand/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.kicktohandstand}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -481,7 +439,7 @@
       y="246.15"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.diveroll}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -517,18 +475,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Dive Roll
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/diveroll/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.diveroll}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -577,7 +528,7 @@
       y="430.77"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.seatdrop}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -613,18 +564,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Seat Drop
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/seatdrop/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.seatdrop}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -659,7 +603,7 @@
       y="86.15"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.casthb}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -695,18 +639,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Cast HB
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/casthb/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.casthb}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -741,7 +678,7 @@
       y="0"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.swingshb}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -777,18 +714,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Swings HB
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/swingshb/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.swingshb}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -823,7 +753,7 @@
       y="0"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.holdringspositions}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -859,18 +789,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Hold Rings Positions
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/holdringspositions/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.holdringspositions}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -891,7 +814,7 @@
       y="430.77"
       width="158.1"
       height="49.23"
-       fill="rgb(100, {{skills.doggydrop}}, 0)" 
+      fill="#cce5ff"
       stroke="#000000"
       pointer-events="all"
     />
@@ -927,18 +850,11 @@
                   line-height: 1.2;
                   pointer-events: all;
                   white-space: normal;
-                   word-wrap:normal; 
+                  word-wrap: normal;
                 "
               >
                 Doggy Drop
-               <input 
-            type="range" 
-            onchange="fetch(`/api/{{username}}/doggydrop/${this.value}`, { method: 'PUT' })" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{{skills.doggydrop}}" 
-            class="slider"> </div>
+              </div>
             </div>
           </div></foreignObject
         >
@@ -983,4 +899,3 @@
   </switch>
 </svg>
 
- 

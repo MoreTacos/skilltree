@@ -1,7 +1,7 @@
 {{#*inline "body"}}
-<div>
-  <h1>Admin page: add or remove users</h1>
-  <h3>Add users bellow:</h3>
+<div class="container">
+  <h1>Admin</h1>
+  <h5>Add users:</h5>
   <label for="name">Name:</label><br />
   <input id="name-input" type="text" />
   <button
@@ -11,12 +11,12 @@ let input = document.getElementById('name-input').value;
 fetch(`/api/add-user/${input}`, { method: 'POST' }); 
 
 let li = document.createElement('li');
-let h4 = document.createElement('h4'); 
-h4.innerHTML=input;
+let p = document.createElement('p'); 
+p.innerHTML=input;
 let button = document.createElement('button');
 button.onclick=function(){ fetch(`api/remove-user/${input}`, { method: 'DELETE' }); this.parentNode.remove() };
 button.innerHTML = 'Remove';
-li.appendChild(h4);
+li.appendChild(p);
 li.appendChild(button);
 let ul = document.getElementById('user-list');
 ul.appendChild(li);
@@ -25,11 +25,11 @@ document.getElementById('name-input').value = '';"
     >
       Add User
     </button>
-    <h3>Remove users bellow:</h3>
+    <h5>Remove users:</h5>
     <ul id="user-list">
       {{#each users}}
       <li>
-        <h4>{{ this }}</h4>
+        <p>{{ this }}</p>
         <button
           onclick="fetch('/api/remove-user/{{
             this
