@@ -12,87 +12,90 @@ use serde::Deserialize;
 use serde::Serialize;
 use sled_extensions::bincode::Tree;
 use sled_extensions::DbExt;
+use std::collections::HashMap;
 
 #[derive(Deserialize, Serialize, Clone, Debug)]
 struct User {
-    name: String,
-    skills: Vec<usize>,
+    username: String,
+    skills: HashMap<String, usize>,
 }
 
 struct Database {
     users: Tree<User>,
 }
 
+fn get_users_names(db: &State<Database>) -> Vec<String> {
+    db.users
+        .iter()
+        .map(|user| user.expect("not user").1.username)
+        .collect()
+}
+
 #[get("/")]
 fn index(db: State<Database>) -> Template {
-    match db.users.get("admin2").expect("DB is up") {
-        Some(v) => (),
-        None => {
-            let admin = User {
-                name: "admin2".to_string(),
-                skills: vec![0],
-            };
-            println!("inserting admin2");
-            db.users.insert("admin2", admin).expect("Inserting admin");
-            ()
-        }
-    }
-    let len = db.users.len();
-    let users: Vec<String> = db
-        .users
-        .iter()
-        .take(len - 1)
-        .map(|user| user.expect("not user").1.name)
-        .collect();
+    let users = get_users_names(&db);
     #[derive(Serialize)]
     struct Context {
         users: Vec<String>,
     };
-
     let context = Context { users };
     Template::render("index", &context)
 }
 
 #[get("/admin")]
 fn admin(db: State<Database>) -> Template {
-    todo!()
-}
-
-#[get("/<name>")]
-fn user(db: State<Database>, name: String) -> Template {
-    todo!()
-    /*
-    match db.users.get("front-roll").unwrap() {
-        Some(v) => (),
-        None => {
-            db.values.insert("front-roll", 0 as usize).unwrap();
-            ()
-        }
-    }
-    let value = db.values.get("front-roll").unwrap().unwrap();
+    let users = get_users_names(&db);
     #[derive(Serialize)]
     struct Context {
-        title: String,
-        value: usize,
-    };
-
-    let context = Context {
-        title: "T".to_string(),
-        value,
-    };
-
-    Template::render("index", &context)
-        */
+        users: Vec<String>,
+    }
+    let context = Context { users };
+    Template::render("admin", &context)
 }
 
-#[post("/front-roll/<value>")]
-fn update(db: State<Database>, value: usize) -> status::Accepted<String> {
-    todo!()
-    /*
-    println!("{} saved to the database", &value);
-    db.users.insert("front-roll", value).unwrap();
-    status::Accepted(Some(format!("value: {}", &value)))
-        */
+#[get("/<username>")]
+fn user(db: State<Database>, username: String) -> Template {
+    let user = db.users.get(username.as_bytes()).unwrap().unwrap();
+    let value = user.skills["front-roll"];
+
+    #[derive(Serialize)]
+    struct Context {
+        username: String,
+        value: usize,
+    };
+    let context = Context { username, value };
+
+    Template::render("user", &context)
+}
+
+#[post("/add-user/<username>")]
+fn add_user(db: State<Database>, username: String) -> status::Accepted<String> {
+    let username = username.to_string();
+    let mut skills = HashMap::new();
+    skills.insert("front-roll".to_string(), 0);
+    let user = User { username: username.clone(), skills };
+
+    db.users.insert(username.clone().as_bytes(), user).expect("Failed to insert user");
+    status::Accepted(Some(format!("User {} added successfully", &username)))
+}
+
+#[put("/<username>/<skill>/<value>")]
+fn update_user(
+    db: State<Database>,
+    username: String,
+    skill: String,
+    value: usize,
+) -> status::Accepted<String> {
+    let mut user = db.users.get(&username.as_bytes()).unwrap().unwrap();
+    user.skills.insert(skill, value);
+    db.users.insert(username.clone().as_bytes(), user).expect("Failed to insert user");
+    status::Accepted(Some(format!("User {} added successfully", &username)))
+}
+
+#[delete("/remove-user/<username>")]
+fn delete_user(db: State<Database>, username: String) -> status::Accepted<String> {
+    db.users.remove(&username.as_bytes()).unwrap().unwrap();
+    status::Accepted(Some(format!("User {} updated successfully", &username)))
 }
 
 fn main() {
@@ -109,7 +112,7 @@ fn main() {
                 .expect("failed to open user tree"),
         })
         .mount("/static", StaticFiles::from("static"))
-        .mount("/", routes![index, user])
-        .mount("/api", routes![update])
+        .mount("/", routes![index, user, admin])
+        .mount("/api", routes![add_user, update_user, delete_user])
         .launch();
 }

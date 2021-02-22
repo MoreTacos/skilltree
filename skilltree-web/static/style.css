@@ -1,3 +1,44 @@
 * {
-    color: black;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+a {
+    color: #007bff;
+}
+
+header {
+    height: 10vh;
+}
+
+header ul {
+    display: flex;
+    list-style: none;
+}
+
+header ul li {
+    padding: 0.5em;
+}
+
+main {
+    height: 80vh;
+}
+
+.user-list li {
+    padding-left: 1em;
+}
+
+footer {
+    height: 10vh;
+}
+
+footer ul {
+    display: flex;
+    list-style: none;
+}
+
+footer ul li {
+    padding: 0.5em;
 }

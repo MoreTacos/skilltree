@@ -1,20 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>SkillTree - Main Page</title>
-        <link rel="stylesheet" href="/static/style.css">
-    </head>
-    <body>
-        <h1>The Skill Tree of Gymnastics</h1>
-        <p>Log your progress using a visual tree</p>
-        <p>Use admin to add and remove users</p>
-        <h3>List of users bellow:</h3>
-        <ul>
-        {{#each users}}
-            <li>{{this}}</li>
-        {{/each}}
-        </ul>
-    </body>
-</html>
+{{#*inline "body"}}
+<div>
+    <h1>The Skill Tree of Gymnastics</h1>
+    <p>Log your progress using a skill tree</p>
+    <p>Use <a href="/admin">admin</a> to add and remove users</p>
+    <h3>List of users bellow:</h3>
+    <ul class="user-list">
+    {{#each users}}
+        <li><a href="/{{this}}">{{this}}</a></li>
+    {{/each}}
+    </ul>
+</div>
+{{/inline}} {{>layout}}

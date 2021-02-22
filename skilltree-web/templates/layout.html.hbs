@@ -3,11 +3,14 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>SkillTree - {{ title }}</title>
+        <title>SkillTree - {{title}}</title>
         <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
-        <h1>HHELLO</h1>
-        {{>tree}}
+      {{>header}}
+      <main>
+        {{~> body}}
+      </main>
+    {{>footer}}
     </body>
 </html>

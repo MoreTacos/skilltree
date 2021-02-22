@@ -57,7 +57,10 @@
                 "
               >
               <p>Front Roll - {{title}}</p>
-              <input type="range" onchange="fetch(`/api/front-roll/${this.value}`, { method: 'POST' })" oninput="document.getElementById('front-roll').style.fill = `rgb(100, ${this.value}, 0)`" min="0" max="255" value="{{value}}" class="slider">
+              <input type="range" 
+                     onchange="fetch(`/api/{{username}}/front-roll/${this.value}`, { method: 'PUT' })" 
+                     oninput="document.getElementById('front-roll').style.fill = `rgb(100, ${this.value}, 0)`" 
+                     min="0" max="255" value="{{value}}" class="slider">
               </form>
             </div>
           </div></foreignObject
