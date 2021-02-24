@@ -46,10 +46,6 @@ body {
     background: url(/static/img/cream_dust.png) repeat 0 0;
 }
 
-main {
-    overflow: hidden;
-}
-
 .container {
     padding: 1em;
 }
@@ -80,14 +76,17 @@ main h3 {
     padding-left: 1em;
 }
 
+.tree {
+    width: 100%;
+    overflow: scroll;
+    border: 1px solid black;
+}
+
 svg {
-    width: 95vw;
     background-color: rgba(255, 255, 255, 0) !important;
 }
 
 footer {
-    position: absolute;
-    bottom: 0;
     width: 100%;
 }
 

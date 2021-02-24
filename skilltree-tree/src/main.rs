@@ -1,64 +1,114 @@
 use std::fs;
 
 fn main() {
-    let mut tree = fs::read_to_string("./src/tree.svg")
+    // READING FILE
+    let tree = fs::read_to_string("./src/tree.svg")
         .expect("Failed at reading file");
     
+    // The general idea here is to locate the right places using split on a
+    // string.
+    //
+    // <rect ... fill="#cce5ff" />
+    // <g ...>
+    //    <switch>
+    //     <foreignObject ...>
+    //      <div ...>
+    //       <div ...>
+    //        <div ...word-wrap:normal>
+    //           SKILL
+    //        </div>
+    //      </div>
+    //     </div>
+    //    </foreignObject>
+    //   <text ...>SKILL(not fully typed)</text>
+    //  </switch>
+    // </g>
+    
+    let mut sliced = tree.split("rect");
 
-    let mut col = tree.split("word-wrap: normal;");
+    // Removing the first slice, which is irrelevant
+    let mut tree = sliced.next().unwrap().to_string();
 
-    let mut tree = col.next().unwrap().to_string();
-
-    let col: Vec<_> = col.collect();
+    let sliced: Vec<_> = sliced.collect();
 
     let mut skills: Vec<String> = vec![];
 
-    for thing in col {
-        let from: usize = thing.find(">").unwrap();
-        let to: usize = thing.find("<").unwrap();
-        let skill: String = thing[from+1..to].split_whitespace().collect();
-        let skill = skill.to_lowercase();
-        skills.push(skill.clone());
-        let p1 = thing[..to].to_string();
-        let p2 = thing[to..].to_string();
-        let username = "{{username}}";
-        let this_value = "${this.value}";
+    for slice in sliced {
+        // find skill
+        let mut search_domain = slice.to_string().clone();
+        
+        // closer to answer 1
+        let from = search_domain.find("word-wrap").unwrap();
+        search_domain = search_domain[from..].to_string();
 
-        let old = format!("skills.{}", &skill);
+        // closer to answer 2
+        let from = search_domain.find(">").unwrap();
+        let to: usize = search_domain.find("<").unwrap();
 
-        let value = "{{".to_string() + &old + "}}";
-        let method = "{ method: 'PUT' }";
-        let input = format!(r###"<input 
-            type="range" 
-            onchange="fetch(`/api/{}/{}/{}`, {})" 
-            oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, {}, 0)`" 
-            min="0" 
-            max="255" 
-            value="{}" 
-            class="slider">"###, &username, &skill, &this_value, &method, &this_value, &value);
-        tree = format!("{} word-wrap:normal; {} {} {}", &tree, &p1, &input, &p2);
-    }
+        let skill_exact: String = search_domain[from+1..to].to_string();
 
-    let mut col = tree.split(r###"fill="#cce5ff""###);
 
-    let mut tree = String::new();
+        let skill = skill_exact
+            .split_whitespace()
+            .collect::<String>()
+            .replace(r",", "")
+            .replace(r"/", "")
+            .replace(r"\", "")
+            .replace(r"'", "")
+            .replace(r"*", "")
+            .replace(r"#", "")
+            .replace(r"$", "")
+            .replace(r".", "")
+            .replace(r"-", "")
+            .replace(r"+", "")
+            .replace(r">", "")
+            .replace(r"<", "")
+            .replace(r"}", "")
+            .replace(r"{", "")
+            .replace(r")", "")
+            .replace(r"?", "")
+            .replace(r"=", "")
+            .replace(r"^", "")
+            .replace(r"%", "")
+            .replace(r"@", "")
+            .replace(r"!", "")
+            .replace(r"~", "")
+            .replace(r"`", "")
+            .replace(r"|", "")
+            .replace(r"[", "")
+            .replace(r"]", "")
+            .replace(r"(", "")
+            .to_lowercase();
 
-    let col: Vec<_> = col.collect();
-
-    skills.push("".to_string());
-
-    let mut i = 0;
-    for thing in col {
-        let mut replace = r###"fill="rgb(100, "###.to_string() + "{{skills." + &skills[i] + "}}" + r#", 0)""#;
-        i+=1;
-        if i > skills.len() - 1 {
-            replace = "".to_string();
+        // skip if empty
+        if skill == "".to_string() {
+            continue
         }
-        tree = format!("{} {} {}", &tree, &thing, &replace);
+
+        assert!(skill.clone().chars().all(char::is_alphanumeric));
+
+        // add input after skill
+        let replace = skill_exact.clone() 
+                + r###"    <input type="range" onchange="fetch(`/api/{{username}}/"### 
+                + &skill 
+                + r###"/${this.value}`, { method: 'PUT' })" oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" min="0" max="255" value="{{skills."### 
+                + &skill 
+                + r###"}}" class="slider">"###;
+        let slice = &slice.replace(&skill_exact, &replace);
+
+        // replace fill in slice
+        let find = r###"fill="#cce5ff""###;
+        let replace = r###"fill=rgb(100, {{skills."###.to_string() + &skill + r###"}}, 0)""###;
+        let slice = &slice.replace(&find, &replace);
+
+        // add skill to vector
+        skills.push(skill.clone());
+
+        tree = format!("{} rect {}", &tree, &slice);
     }
 
-    //println!("{}", &tree);
-    for skill in skills {
-        println!("{}", skill);
-    }
+    println!("{}", &tree);
+    //for skill in skills {
+    //    println!("{}", skill);
+    //}
 }

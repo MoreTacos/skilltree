@@ -54,10 +54,20 @@ fn admin(db: State<Database>) -> Template {
     Template::render("admin", &context)
 }
 
-#[get("/<username>")]
+#[get("/user/<username>")]
 fn user(db: State<Database>, username: String) -> Template {
     let user = db.users.get(username.as_bytes()).unwrap().unwrap();
     Template::render("user", &user)
+}
+
+#[get("/skill/<skill>")]
+fn skill(db: State<Database>, skill: String) -> Template {
+    #[derive(Serialize)]
+    struct Context {
+        skill: String
+    }
+    let context = Context { skill };
+    Template::render("skill", &context)
 }
 
 #[post("/add-user/<username>")]
@@ -72,8 +82,6 @@ fn add_user(db: State<Database>, username: String) -> status::Accepted<String> {
     skills.insert("front-roll".to_string(), 0);
     let user = User { username: username.clone(), skills };
     
-    dbg!(&user);
-
     db.users.insert(username.clone().as_bytes(), user).expect("Failed to insert user");
     status::Accepted(Some(format!("User {} added successfully", &username)))
 }
@@ -111,7 +119,7 @@ fn main() {
                 .expect("failed to open user tree"),
         })
         .mount("/static", StaticFiles::from("static"))
-        .mount("/", routes![index, user, admin])
+        .mount("/", routes![index, user, admin, skill])
         .mount("/api", routes![add_user, update_user, delete_user])
         .launch();
 }
