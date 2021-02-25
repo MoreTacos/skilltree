@@ -91,24 +91,24 @@ fn main() {
         let replace = skill_exact.clone() 
                 + r###"    <input type="range" onchange="fetch(`/api/{{username}}/"### 
                 + &skill 
-                + r###"/${this.value}`, { method: 'PUT' })" oninput="this.closest('g').previousElementSibling.style.fill = `rgb(100, ${this.value}, 0)`" min="0" max="255" value="{{skills."### 
+                + r###"/${this.value}`, { method: 'PUT' })" oninput="this.closest('g').previousElementSibling.style.fill = `rgb(175, ${this.value}, 25)`" min="0" max="255" value="{{skills."### 
                 + &skill 
                 + r###"}}" class="slider">"###;
         let slice = &slice.replace(&skill_exact, &replace);
 
         // replace fill in slice
         let find = r###"fill="#cce5ff""###;
-        let replace = r###"fill=rgb(100, {{skills."###.to_string() + &skill + r###"}}, 0)""###;
+        let replace = r###"fill="rgb(175, {{skills."###.to_string() + &skill + r###"}}, 25)""###;
         let slice = &slice.replace(&find, &replace);
 
         // add skill to vector
         skills.push(skill.clone());
 
-        tree = format!("{} rect {}", &tree, &slice);
+        tree = format!("{}rect {}", &tree, &slice);
     }
 
-    println!("{}", &tree);
-    //for skill in skills {
-    //    println!("{}", skill);
-    //}
+    let skills: String = skills.join("\n");
+
+    fs::write("tree.svg.hbs", &tree).expect("failed to write tree");
+    fs::write("skills", &skills).expect("failed to write skills");
 }

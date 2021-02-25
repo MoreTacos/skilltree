@@ -82,6 +82,10 @@ main h3 {
     border: 1px solid black;
 }
 
+input[type=range] {
+  width: 80%;
+}
+
 svg {
     background-color: rgba(255, 255, 255, 0) !important;
 }
