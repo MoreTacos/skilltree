@@ -1,13 +1,8 @@
-{{#*inline "body"}}
 <div class="container">
     <h1>{{skill}}</h1>
     <div>
       <h3>Videos about skill</h3>
       <ul>
-        {{each video}}
-          <iframe width="420" height="315" src="https://www.youtube.com/embed/{{this}}"</iframe>
-        {{/each}}
       </ul>
     </div>
 </div>
-{{/inline}} {{>layout}}
