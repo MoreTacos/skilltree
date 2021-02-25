@@ -62,8 +62,9 @@ fn user(db: State<Database>, username: String) -> Template {
 
 #[get("/skill/<skill>")]
 fn skill(db: State<Database>, skill: String) -> Template {
-    #[derive(Serialize)]
     let embed = vec!["2wcw_O_19XQ".to_string(), "VjiH3mpxyrQ".to_string()];
+
+    #[derive(Serialize)]
     struct Context {
         skill: String,
         embed: Vec<String>,
