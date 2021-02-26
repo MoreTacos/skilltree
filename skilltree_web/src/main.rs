@@ -3,6 +3,10 @@
 #[macro_use]
 extern crate rocket;
 
+mod api;
+
+use skilltree_core::User;
+use skilltree_core::Database;
 use rocket::config::Environment;
 use rocket::response::status;
 use rocket::State;
@@ -15,16 +19,6 @@ use sled_extensions::bincode::Tree;
 use sled_extensions::DbExt;
 use std::collections::HashMap;
 use std::fs;
-
-#[derive(Deserialize, Serialize, Clone, Debug)]
-struct User {
-    username: String,
-    skills: HashMap<String, usize>,
-}
-
-struct Database {
-    users: Tree<User>,
-}
 
 fn get_users_names(db: &State<Database>) -> Vec<String> {
     db.users
@@ -89,52 +83,6 @@ fn skill(_db: State<Database>, skill: String) -> Template {
     Template::render("skill", &context)
 }
 
-#[post("/add-user/<username>")]
-fn add_user(db: State<Database>, username: String) -> status::Accepted<String> {
-    let username = username.to_string();
-    let mut skills = HashMap::new();
-
-    let skill_list: Vec<String> = fs::read_to_string("./src/skills")
-        .unwrap()
-        .split('\n')
-        .map(|x| x.to_string())
-        .collect();
-    for skill in skill_list {
-        skills.insert(skill, 0);
-    }
-    skills.insert("front-roll".to_string(), 0);
-    let user = User {
-        username: username.clone(),
-        skills,
-    };
-
-    db.users
-        .insert(username.clone().as_bytes(), user)
-        .expect("Failed to insert user");
-    status::Accepted(Some(format!("User {} added successfully", &username)))
-}
-
-#[put("/<username>/<skill>/<value>")]
-fn update_user(
-    db: State<Database>,
-    username: String,
-    skill: String,
-    value: usize,
-) -> status::Accepted<String> {
-    let mut user = db.users.get(&username.as_bytes()).unwrap().unwrap();
-    user.skills.insert(skill, value);
-    db.users
-        .insert(username.clone().as_bytes(), user)
-        .expect("Failed to insert user");
-    status::Accepted(Some(format!("User {} added successfully", &username)))
-}
-
-#[delete("/remove-user/<username>")]
-fn delete_user(db: State<Database>, username: String) -> status::Accepted<String> {
-    db.users.remove(&username.as_bytes()).unwrap().unwrap();
-    status::Accepted(Some(format!("User {} updated successfully", &username)))
-}
-
 fn svg_setup() -> () {
     let src_path;
     let write_path_tree;
@@ -171,7 +119,7 @@ fn ignite() -> rocket::Rocket {
         })
         .mount("/static", StaticFiles::from("static"))
         .mount("/", routes![index, user, admin, skill, help, conduct, privacy])
-        .mount("/api", routes![add_user, update_user, delete_user])
+        .mount("/api", api::routes())
 }
 
 fn main() {
