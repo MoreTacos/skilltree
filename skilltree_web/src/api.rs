@@ -22,12 +22,6 @@ pub fn routes() -> Vec<Route> {
     ]
 }
 
-#[derive(Deserialize, Serialize, Clone, Debug)]
-struct User {
-    username: String,
-    skills: HashMap<String, usize>,
-}
-
 fn get_users_names(db: &State<Database>) -> Vec<String> {
     db.users
         .iter()

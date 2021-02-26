@@ -4,6 +4,7 @@
 extern crate rocket;
 
 mod api;
+mod pages;
 
 use skilltree_core::User;
 use skilltree_core::Database;
@@ -20,67 +21,9 @@ use sled_extensions::DbExt;
 use std::collections::HashMap;
 use std::fs;
 
-fn get_users_names(db: &State<Database>) -> Vec<String> {
-    db.users
-        .iter()
-        .map(|user| user.expect("not user").1.username)
-        .collect()
-}
-
-#[get("/")]
-fn index(db: State<Database>) -> Template {
-    let users = get_users_names(&db);
-    #[derive(Serialize)]
-    struct Context {
-        users: Vec<String>,
-    };
-    let context = Context { users };
-    Template::render("index", &context)
-}
-
-#[get("/admin")]
-fn admin(db: State<Database>) -> Template {
-    let users = get_users_names(&db);
-    #[derive(Serialize)]
-    struct Context {
-        users: Vec<String>,
-    }
-    let context = Context { users };
-    Template::render("admin", &context)
-}
-
-#[get("/help")]
-fn help(_db: State<Database>) -> Template {
-    Template::render("help", ())
-}
-
-#[get("/code-of-conduct")]
-fn conduct(_db: State<Database>) -> Template {
-    Template::render("conduct", ())
-}
-
-#[get("/privacy")]
-fn privacy(_db: State<Database>) -> Template {
-    Template::render("privacy", ())
-}
-
-#[get("/user/<username>")]
-fn user(db: State<Database>, username: String) -> Template {
-    let user = db.users.get(username.as_bytes()).unwrap().unwrap();
-    Template::render("user", &user)
-}
-
-#[get("/skill/<skill>")]
-fn skill(_db: State<Database>, skill: String) -> Template {
-    let embed = vec!["2wcw_O_19XQ".to_string(), "VjiH3mpxyrQ".to_string()];
-
-    #[derive(Serialize)]
-    struct Context {
-        skill: String,
-        embed: Vec<String>,
-    }
-    let context = Context { skill, embed };
-    Template::render("skill", &context)
+#[catch(404)]
+fn not_found() -> Template {
+    Template::render("error", ())
 }
 
 fn svg_setup() -> () {
@@ -118,8 +61,9 @@ fn ignite() -> rocket::Rocket {
                 .expect("failed to open user tree"),
         })
         .mount("/static", StaticFiles::from("static"))
-        .mount("/", routes![index, user, admin, skill, help, conduct, privacy])
+        .mount("/", pages::routes())
         .mount("/api", api::routes())
+        .register(catchers![not_found])
 }
 
 fn main() {
