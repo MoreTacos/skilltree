@@ -1,8 +1,14 @@
+{{#*inline "body"}}
 <div class="container">
-    <h1>{{skill}}</h1>
+    <h1>{{tldr.skill}}</h1>
+    <p>{{tldr.desc}}</p>
     <div>
       <h3>Videos about skill</h3>
       <ul>
+        {{#each embed}}
+          <li><iframe width="560" height="315" src="https://www.youtube.com/embed/{{link}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></li>
+        {{/each}}
       </ul>
     </div>
 </div>
+{{/inline}} {{>layout}}

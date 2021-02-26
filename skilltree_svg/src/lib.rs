@@ -12,14 +12,9 @@ impl Tree {
         let mut svg = fs::read_to_string(path).expect("Failed at reading file");
 
         // Remove those damn spans
-        loop {
-            if !svg.contains("span") {
-                break;
-            }
 
-            svg = svg.replace(r"<span>", "");
-            svg = svg.replace(r"</span>", "");
-        }
+        svg = svg.replace(r"<span>", "");
+        svg = svg.replace(r"</span>", "");
 
         // The general idea here is to locate the right places using split on a
         // string.
@@ -109,15 +104,26 @@ impl Tree {
             let replace = skill_exact.clone()
                 + r###"    <input type="range" onchange="fetch(`/api/{{username}}/"###
                 + &skill
-                + r###"/${this.value}`, { method: 'PUT' })" oninput="this.closest('g').previousElementSibling.style.fill = `rgb(175, ${this.value}, 25)`" min="0" max="255" value="{{skills."###
+                + r###"/${this.value}`, { method: 'PUT' })" 
+                oninput="this.closest('g').previousElementSibling.style.fill = `rgb(175, ${this.value}, 25)`" 
+                min="0" max="255" value="{{#if skills."###
                 + &skill
-                + r###"}}" class="slider">"###;
-            let slice = &slice.replace(&skill_exact, &replace);
+                + r###"}}{{"###
+                + &skill
+                + r###"}}{{else}}0{{/if}}" class="slider">"###;
+            let slice = &slice.replacen(&skill_exact, &replace, 1);
 
             // replace fill in slice
             let find = r###"fill="#cce5ff""###;
             let replace =
-                r###"fill="rgb(175, {{skills."###.to_string() + &skill + r###"}}, 25)""###;
+                r###"fill="rgb(175, {{#if skills."###.to_string()
+                + &skill
+                + r###"}}{{skills."### 
+                + &skill 
+                + r###"}}{{else}}0{{/if}}, 25)""###;
+
+            "{{#if method}}{{method}}{{else}}POST{{/if}}";
+
             let slice = &slice.replace(&find, &replace);
 
             // add skill to vector
@@ -132,12 +138,10 @@ impl Tree {
         }
     }
 
-    pub fn write(self, path_tree: &str, path_skills: &str) -> io::Result<()> {
+    pub fn write(self, path_tree: &str) -> io::Result<()> {
         let svg = self.svg;
-        let skills = self.skills.join("\n");
 
         fs::write(path_tree, svg)?;
-        fs::write(path_skills, skills)?;
 
         Ok(())
     }
