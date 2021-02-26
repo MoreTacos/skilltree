@@ -1,0 +1,45 @@
+{{#*inline "body"}}
+<div class="container">
+  <h1>Admin</h1>
+  <h5>Add users:</h5>
+  <label for="name">Name:</label><br />
+  <input id="name-input" type="text" />
+  <button
+      type="submit"
+      onClick="
+let input = document.getElementById('name-input').value;
+fetch(`/api/add-user/${input}`, { method: 'POST' }); 
+
+let li = document.createElement('li');
+let p = document.createElement('p'); 
+p.innerHTML=input;
+let button = document.createElement('button');
+button.onclick=function(){ fetch(`api/remove-user/${input}`, { method: 'DELETE' }); this.parentNode.remove() };
+button.innerHTML = 'Remove';
+li.appendChild(p);
+li.appendChild(button);
+let ul = document.getElementById('user-list');
+ul.appendChild(li);
+
+document.getElementById('name-input').value = '';"
+    >
+      Add User
+    </button>
+    <h5>Remove users:</h5>
+    <ul id="user-list">
+      {{#each users}}
+      <li>
+        <p>{{ this }}</p>
+        <button
+          onclick="fetch('/api/remove-user/{{
+            this
+          }}', { method: 'DELETE' }); this.parentNode.remove()"
+        >
+          Remove
+        </button>
+      </li>
+      {{/each}}
+    </ul>
+</div>
+
+{{/inline}} {{>layout}}
