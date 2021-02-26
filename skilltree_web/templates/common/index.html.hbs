@@ -1,0 +1,17 @@
+{{#*inline "body"}}
+<div class="container">
+    <h1>Log your progress using a skill tree</h1>
+    <img src="./static/img/skilltree.png" />
+    <h2>What is a skill tree?</h2>
+    <p>A visual tool that can be used to plan and track your gymnastics progress.</p>
+    <h2>How to use skill tree?</h2>
+    <p>Use <a href="/admin">admin</a> to add and remove users</p>
+    <p>If you want to know more, <a href="/help">check the help page</a></p>
+    <h3>View or edit users:</h3>
+    <ul class="user-list">
+    {{#each users}}
+        <li><a href="/user/{{this}}">{{this}}</a></li>
+    {{/each}}
+    </ul>
+</div>
+{{/inline}} {{>layout}}

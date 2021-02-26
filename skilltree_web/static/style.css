@@ -10,11 +10,15 @@ a {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Corben', Georgia, Times, serif;
+    font-family: 'Nobile', Georgia, Times, serif;
 }
 
 p, div, li {
     font-family: 'Nobile', Helvetica, Arial, sans-serif;
+}
+
+.main-header h5 {
+    padding: 0.5em;
 }
 
 header {
@@ -50,13 +54,13 @@ body {
     padding: 1em;
 }
 
-main h1 {
-    text-align: center;
-    padding: 1em;
-}
-
 main h5 {
     padding-top: 2em;
+}
+
+main h1 {
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
 }
 
 main ul {
@@ -70,6 +74,21 @@ main ul li {
 main h3 {
     padding-bottom: 0.5em;
     padding-top: 0.5em;
+}
+
+main h2 {
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+}
+
+main img {
+    width: 100%;
+    padding-top: 1em;
+    padding-bottom: 2em;
+}
+
+main p {
+    padding-bottom: 1em;
 }
 
 .user-list li {

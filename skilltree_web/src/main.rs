@@ -55,6 +55,21 @@ fn admin(db: State<Database>) -> Template {
     Template::render("admin", &context)
 }
 
+#[get("/help")]
+fn help(_db: State<Database>) -> Template {
+    Template::render("help", ())
+}
+
+#[get("/code-of-conduct")]
+fn conduct(_db: State<Database>) -> Template {
+    Template::render("conduct", ())
+}
+
+#[get("/privacy")]
+fn privacy(_db: State<Database>) -> Template {
+    Template::render("privacy", ())
+}
+
 #[get("/user/<username>")]
 fn user(db: State<Database>, username: String) -> Template {
     let user = db.users.get(username.as_bytes()).unwrap().unwrap();
@@ -128,12 +143,12 @@ fn svg_setup() -> () {
     match Environment::active().expect("config error") {
         Environment::Development => {
             src_path = "./templates/src/smalltree.svg".to_string();
-            write_path_tree = "./templates/dev_templates/tree.svg.html".to_string();
+            write_path_tree = "./templates/dev_templates/tree.svg.hbs".to_string();
             write_path_skills = "./src/skills".to_string();
         }
         Environment::Staging | Environment::Production => {
             src_path = "./templates/src/fulltree.svg".to_string();
-            write_path_tree = "./templates/prod_templates/tree.svg.html".to_string();
+            write_path_tree = "./templates/prod_templates/tree.svg.hbs".to_string();
             write_path_skills = "./src/skills".to_string();
         }
     }
@@ -155,7 +170,7 @@ fn ignite() -> rocket::Rocket {
                 .expect("failed to open user tree"),
         })
         .mount("/static", StaticFiles::from("static"))
-        .mount("/", routes![index, user, admin, skill])
+        .mount("/", routes![index, user, admin, skill, help, conduct, privacy])
         .mount("/api", routes![add_user, update_user, delete_user])
 }
 
