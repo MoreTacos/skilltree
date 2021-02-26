@@ -3,17 +3,18 @@
 #[macro_use]
 extern crate rocket;
 
+use rocket::config::Environment;
 use rocket::response::status;
-use rocket::Route;
-use std::fs;
 use rocket::State;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 use serde::Deserialize;
 use serde::Serialize;
+use skilltree_svg::Tree as SvgTree;
 use sled_extensions::bincode::Tree;
 use sled_extensions::DbExt;
 use std::collections::HashMap;
+use std::fs;
 
 #[derive(Deserialize, Serialize, Clone, Debug)]
 struct User {
@@ -61,7 +62,7 @@ fn user(db: State<Database>, username: String) -> Template {
 }
 
 #[get("/skill/<skill>")]
-fn skill(db: State<Database>, skill: String) -> Template {
+fn skill(_db: State<Database>, skill: String) -> Template {
     let embed = vec!["2wcw_O_19XQ".to_string(), "VjiH3mpxyrQ".to_string()];
 
     #[derive(Serialize)]
@@ -78,14 +79,23 @@ fn add_user(db: State<Database>, username: String) -> status::Accepted<String> {
     let username = username.to_string();
     let mut skills = HashMap::new();
 
-    let skill_list: Vec<String> = fs::read_to_string("./src/skills").unwrap().split('\n').map(|x| x.to_string()).collect();
+    let skill_list: Vec<String> = fs::read_to_string("./src/skills")
+        .unwrap()
+        .split('\n')
+        .map(|x| x.to_string())
+        .collect();
     for skill in skill_list {
         skills.insert(skill, 0);
     }
     skills.insert("front-roll".to_string(), 0);
-    let user = User { username: username.clone(), skills };
-    
-    db.users.insert(username.clone().as_bytes(), user).expect("Failed to insert user");
+    let user = User {
+        username: username.clone(),
+        skills,
+    };
+
+    db.users
+        .insert(username.clone().as_bytes(), user)
+        .expect("Failed to insert user");
     status::Accepted(Some(format!("User {} added successfully", &username)))
 }
 
@@ -98,7 +108,9 @@ fn update_user(
 ) -> status::Accepted<String> {
     let mut user = db.users.get(&username.as_bytes()).unwrap().unwrap();
     user.skills.insert(skill, value);
-    db.users.insert(username.clone().as_bytes(), user).expect("Failed to insert user");
+    db.users
+        .insert(username.clone().as_bytes(), user)
+        .expect("Failed to insert user");
     status::Accepted(Some(format!("User {} added successfully", &username)))
 }
 
@@ -108,7 +120,28 @@ fn delete_user(db: State<Database>, username: String) -> status::Accepted<String
     status::Accepted(Some(format!("User {} updated successfully", &username)))
 }
 
-fn main() {
+fn svg_setup() -> () {
+    let src_path;
+    let write_path_tree;
+    let write_path_skills;
+
+    match Environment::active().expect("config error") {
+        Environment::Development => {
+            src_path = "./templates/src/smalltree.svg".to_string();
+            write_path_tree = "./templates/dev_templates/tree.svg.html".to_string();
+            write_path_skills = "./src/skills".to_string();
+        }
+        Environment::Staging | Environment::Production => {
+            src_path = "./templates/src/fulltree.svg".to_string();
+            write_path_tree = "./templates/prod_templates/tree.svg.html".to_string();
+            write_path_skills = "./src/skills".to_string();
+        }
+    }
+    let tree = SvgTree::new(&src_path);
+    tree.write(&write_path_tree, &write_path_skills).unwrap();
+}
+
+fn ignite() -> rocket::Rocket {
     let db = sled_extensions::Config::default()
         .path("./database")
         .open()
@@ -124,5 +157,32 @@ fn main() {
         .mount("/static", StaticFiles::from("static"))
         .mount("/", routes![index, user, admin, skill])
         .mount("/api", routes![add_user, update_user, delete_user])
-        .launch();
+}
+
+fn main() {
+    svg_setup();
+
+    ignite().launch();
+}
+
+#[cfg(test)]
+mod test {
+    use super::ignite;
+    use rocket::local::Client;
+    use rocket::http::Status;
+
+    #[test]
+    fn big_test1() {
+        let client = Client::new(ignite()).expect("valid rocket instance");
+        let response0 = client.get("/").dispatch();
+        //let response1 = client.post("/add-user/TestUser").dispatch();
+        //let response2 = client.get("/user/TestUser").dispatch();
+        //let response3 = client.put("/api/TestUser/diveroll/0").dispatch();
+        //let response4 = client.delete("/remove-user/TestUser").dispatch();
+        assert_eq!(response0.status(), Status::Ok);
+        //assert_eq!(response1.status(), Status::Ok);
+        //assert_eq!(response2.status(), Status::Ok);
+        //assert_eq!(response3.status(), Status::Ok);
+        //assert_eq!(response4.status(), Status::Ok);
+    }
 }

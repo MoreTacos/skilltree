@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "skilltree_web",
+    "skilltree_svg",
+]

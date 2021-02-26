@@ -1,0 +1,20 @@
+[global]
+port = 8000
+keep_alive = 5
+read_timeout = 5
+write_timeout = 5
+
+[development]
+address = "localhost"
+log = "normal"
+template_dir = "templates/dev_templates/"
+
+[staging]
+address = "0.0.0.0"
+log = "normal"
+template_dir = "templates/prod_templates/"
+
+[production]
+address = "0.0.0.0"
+log = "critical"
+template_dir = "templates/prod_templates/"
