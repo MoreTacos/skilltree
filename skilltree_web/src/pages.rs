@@ -69,12 +69,15 @@ fn user(db: State<Database>, username: String) -> Template {
 
 #[get("/skill/<skill>")]
 fn skill(_db: State<Database>, skill: String) -> Template {
-
-    let skill = fs::read_to_string("./templates/skills/diveroll.toml").expect("failed to open file skill.toml");
+    let path = format!("./templates/skills/{}.toml", skill);
+    let skill = match fs::read_to_string(path) {
+        Ok(v) => v,
+        Err(_) => {
+            fs::read_to_string("./templates/skills/missing.toml").expect("failed to read missing skill file")
+        }
+    };
     
     let context: toml::Value = toml::from_str(&skill).unwrap();
-
-    dbg!(&context);
 
     Template::render("skill", &context)
 }
