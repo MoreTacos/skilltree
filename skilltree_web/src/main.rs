@@ -6,20 +6,12 @@ extern crate rocket;
 mod api;
 mod pages;
 
-use skilltree_core::User;
 use skilltree_core::Database;
 use rocket::config::Environment;
-use rocket::response::status;
-use rocket::State;
+use sled_extensions::DbExt;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
-use serde::Deserialize;
-use serde::Serialize;
 use skilltree_svg::Tree as SvgTree;
-use sled_extensions::bincode::Tree;
-use sled_extensions::DbExt;
-use std::collections::HashMap;
-use std::fs;
 
 #[catch(404)]
 fn not_found() -> Template {
@@ -29,22 +21,19 @@ fn not_found() -> Template {
 fn svg_setup() -> () {
     let src_path;
     let write_path_tree;
-    let write_path_skills;
 
     match Environment::active().expect("config error") {
         Environment::Development => {
             src_path = "./templates/src/smalltree.svg".to_string();
             write_path_tree = "./templates/dev_templates/tree.svg.hbs".to_string();
-            write_path_skills = "./src/skills".to_string();
         }
         Environment::Staging | Environment::Production => {
             src_path = "./templates/src/fulltree.svg".to_string();
             write_path_tree = "./templates/prod_templates/tree.svg.hbs".to_string();
-            write_path_skills = "./src/skills".to_string();
         }
     }
     let tree = SvgTree::new(&src_path);
-    tree.write(&write_path_tree, &write_path_skills).unwrap();
+    tree.write(&write_path_tree).unwrap();
 }
 
 fn ignite() -> rocket::Rocket {
