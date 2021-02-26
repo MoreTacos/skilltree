@@ -19,13 +19,16 @@ jobs:
     - name: Build Tree
       run: |
         cd skilltree-tree
+        rustup default nightly
         cargo build --verbose
         ./tree.sh
     - name: Build Web
       run: |
         cd skilltree-web
+        rustup default nightly
         cargo build --verbose
     - name: Run tests Web
       run: |
         cd skilltree-web
+        rustup default nightly
         cargo test --verbose
