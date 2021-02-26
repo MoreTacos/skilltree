@@ -16,7 +16,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+    - name: Build Tree
+      run: |
+        cd skilltree-tree
+        cargo build --verbose
+        ./tree.sh
+    - name: Build Web
+      run: |
+        cd skilltree-web
+        cargo build --verbose
+    - name: Run tests Web
+      run: |
+        cd skilltree-web
+        cargo test --verbose
