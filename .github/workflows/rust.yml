@@ -16,19 +16,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build Tree
+    - name: Build SvgTree
       run: |
-        cd skilltree-tree
+        cd skilltree_svg
         rustup default nightly
         cargo build --verbose
-        ./tree.sh
+    - name: Run tests Svg
+      run: |
+        cd skilltree_svg
+        rustup default nightly
+        cargo test --verbose
     - name: Build Web
       run: |
-        cd skilltree-web
+        cd skilltree_web
         rustup default nightly
         cargo build --verbose
     - name: Run tests Web
       run: |
-        cd skilltree-web
+        cd skilltree_web
         rustup default nightly
         cargo test --verbose
