@@ -3,5 +3,5 @@
 members = [
     "skilltree_web",
     "skilltree_svg",
-    "skilltree-core",
+    "skilltree_core",
 ]

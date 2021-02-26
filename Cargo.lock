@@ -1272,7 +1272,18 @@ dependencies = [
  "rocket_contrib",
  "serde",
  "serde_json",
+ "skilltree_core",
  "skilltree_svg",
+ "sled 0.34.6",
+ "sled-extensions",
+]
+
+[[package]]
+name = "skilltree_core"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
  "sled 0.34.6",
  "sled-extensions",
 ]
