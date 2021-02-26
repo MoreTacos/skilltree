@@ -101,14 +101,17 @@ impl Tree {
             assert!(skill.clone().chars().all(char::is_alphanumeric));
 
             // add input after skill
-            let replace = skill_exact.clone()
-                + r###"    <input type="range" onchange="fetch(`/api/{{username}}/"###
+            let replace = r###"<a href="/skill/"###.to_string() 
+                + &skill
+                + r###"">"###
+                + &skill_exact
+                + r###"</a><input type="range" onchange="fetch(`/api/{{username}}/"###
                 + &skill
                 + r###"/${this.value}`, { method: 'PUT' })" 
                 oninput="this.closest('g').previousElementSibling.style.fill = `rgb(175, ${this.value}, 25)`" 
                 min="0" max="255" value="{{#if skills."###
                 + &skill
-                + r###"}}{{"###
+                + r###"}}{{skills."###
                 + &skill
                 + r###"}}{{else}}0{{/if}}" class="slider">"###;
             let slice = &slice.replacen(&skill_exact, &replace, 1);
