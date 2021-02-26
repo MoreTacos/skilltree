@@ -1,0 +1,34 @@
+name: Rust
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Tree
+      run: |
+        cd skilltree-tree
+        rustup default nightly
+        cargo build --verbose
+        ./tree.sh
+    - name: Build Web
+      run: |
+        cd skilltree-web
+        rustup default nightly
+        cargo build --verbose
+    - name: Run tests Web
+      run: |
+        cd skilltree-web
+        rustup default nightly
+        cargo test --verbose
