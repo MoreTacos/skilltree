@@ -1,5 +1,5 @@
 [package]
-name = "skilltree-web"
+name = "skilltree"
 version = "0.1.0"
 authors = ["Davide Radaelli <daviderady@gmail.com>"]
 edition = "2018"
