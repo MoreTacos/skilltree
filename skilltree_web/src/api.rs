@@ -8,6 +8,7 @@ use skilltree_core::Database;
 pub fn routes() -> Vec<Route> {
     routes![
         add_user,
+        rename_user,
         update_user,
         delete_user,
     ]
@@ -27,6 +28,19 @@ fn add_user(db: State<Database>, username: String) -> status::Accepted<String> {
         .insert(username.clone().as_bytes(), user)
         .expect("Failed to insert user");
     status::Accepted(Some(format!("User {} added successfully", &username)))
+}
+
+#[put("/<username>/<rename>")]
+fn rename_user(
+    db: State<Database>,
+    username: String,
+    rename: String,
+) -> status::Accepted<String> {
+    let mut user = db.users.get(&username.as_bytes()).unwrap().unwrap();
+    user.username = rename.clone();
+    db.users.remove(&username.as_bytes()).unwrap().unwrap();
+    db.users.insert(rename.clone().as_bytes(), user).expect("Failed to rename user");
+    status::Accepted(Some(format!("User {} renamed successfully", &rename)))
 }
 
 #[put("/<username>/<skill>/<value>")]
