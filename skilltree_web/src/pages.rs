@@ -61,8 +61,8 @@ fn privacy(_db: State<Database>) -> Template {
     Template::render("privacy", ())
 }
 
-#[get("/user/<username>")]
-fn user(db: State<Database>, username: String) -> Template {
+#[get("/user?<username>&<page>")]
+fn user(db: State<Database>, username: String, page: String) -> Template {
     let user = db.users.get(username.as_bytes()).unwrap().unwrap();
     Template::render("user", &user)
 }

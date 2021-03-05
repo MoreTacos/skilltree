@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::fs;
 use std::io;
 
@@ -7,7 +8,7 @@ pub struct Tree {
 }
 
 impl Tree {
-    pub fn new(path: &str) -> Self {
+    fn new(path: &str) -> Self {
         // READING FILE
         let mut svg = fs::read_to_string(path).expect("Failed at reading file");
 
@@ -35,7 +36,7 @@ impl Tree {
         //  </switch>
         // </g>
 
-        let mut sliced = svg.split("rect");
+        let mut sliced = svg.split(r"<rect");
 
         // Removing the first slice, which is irrelevant
         let mut svg = sliced.next().unwrap().to_string();
@@ -101,7 +102,7 @@ impl Tree {
             assert!(skill.clone().chars().all(char::is_alphanumeric));
 
             // add input after skill
-            let replace = r###"<a href="/skill/"###.to_string() 
+            let replace = r###"<a href="/skill/"###.to_string()
                 + &skill
                 + r###"">"###
                 + &skill_exact
@@ -118,11 +119,10 @@ impl Tree {
 
             // replace fill in slice
             let find = r###"fill="#cce5ff""###;
-            let replace =
-                r###"fill="rgb(175, {{#if skills."###.to_string()
+            let replace = r###"fill="rgb(175, {{#if skills."###.to_string()
                 + &skill
-                + r###"}}{{skills."### 
-                + &skill 
+                + r###"}}{{skills."###
+                + &skill
                 + r###"}}{{else}}0{{/if}}, 25)""###;
 
             "{{#if method}}{{method}}{{else}}POST{{/if}}";
@@ -132,52 +132,45 @@ impl Tree {
             // add skill to vector
             skills.push(skill.clone());
 
-            svg = format!("{}rect {}", &svg, &slice);
+            svg = format!("{}<rect {}", &svg, &slice);
         }
 
-        Tree {
-            svg,
-            skills,
-        }
+        Tree { svg, skills }
     }
 
-    pub fn write(self, path_tree: &str) -> io::Result<()> {
+    fn write_file(self, path: &str) -> io::Result<()> {
         let svg = self.svg;
 
-        fs::write(path_tree, svg)?;
+        fs::write(path, svg)?;
 
         Ok(())
     }
 
-    pub fn print(self) -> () {
-        let svg = self.svg;
-        let skills = self.skills.join("---");
-
-        println!("{}", svg);
-        println!("{}", skills);
+    pub fn write_dir(from: &str, to: &str) -> io::Result<()> {
+        for entry in fs::read_dir(from)? {
+            let entry = entry?;
+            let path = entry.path();
+            let tree = Tree::new(path.to_str().expect("empty path"));
+            let mut to_path = PathBuf::new();
+            to_path.push(to);
+            to_path.push(entry.file_name().to_str().expect("no file name"));
+            tree.write_file(&to_path.to_str().unwrap())?;
+        }
+        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs;
 
     #[test]
-    fn print_small_tree() {
-        let tree = Tree::new("./static/smalltree.svg");
-        assert!(!tree.svg.is_empty());
-        assert!(!tree.skills.is_empty());
-
-        tree.print();
+    fn small_tree() {
+        Tree::write_dir("./static/smalltree/", "/tmp").expect("failed smalltree test");
     }
 
     #[test]
-    fn print_full_tree() {
-        let tree = Tree::new("./static/fulltree.svg");
-        assert!(!tree.svg.is_empty());
-        assert!(!tree.skills.is_empty());
-
-        tree.print();
+    fn full_tree() {
+        Tree::write_dir("./static/fulltree", "/tmp/").expect("failed bigtree test");
     }
 }

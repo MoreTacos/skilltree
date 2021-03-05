@@ -1292,6 +1292,9 @@ dependencies = [
 [[package]]
 name = "skilltree_svg"
 version = "0.1.0"
+dependencies = [
+ "glob",
+]
 
 [[package]]
 name = "slab"
