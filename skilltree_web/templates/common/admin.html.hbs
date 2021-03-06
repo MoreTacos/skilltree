@@ -27,13 +27,11 @@ document.getElementById('name-input').value = '';"
     </button>
     <h5>Remove users:</h5>
     <ul id="user-list">
-      {{#each users}}
+      {{#each this}}
       <li>
-        <p>{{ this }}</p>
+        <p>{{ this.username }}</p>
         <button
-          onclick="fetch('/api/remove-user/{{
-            this
-          }}', { method: 'DELETE' }); this.parentNode.remove()"
+          onclick="fetch('/api/remove-user/{{this.username}}', { method: 'DELETE' }); this.parentNode.remove()"
         >
           Remove
         </button>

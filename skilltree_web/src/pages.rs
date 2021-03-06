@@ -1,4 +1,5 @@
 use rocket::State;
+use skilltree_core::User;
 use std::fs;
 use rocket::Route;
 use skilltree_core::Database;
@@ -17,33 +18,23 @@ pub fn routes() -> Vec<Route> {
     ]
 }
 
-fn get_users_names(db: &State<Database>) -> Vec<String> {
+fn get_users(db: &State<Database>) -> Vec<User> {
     db.users
         .iter()
-        .map(|user| user.expect("not user").1.username)
+        .map(|user| user.expect("not user").1)
         .collect()
 }
 
 #[get("/")]
 fn index(db: State<Database>) -> Template {
-    let users = get_users_names(&db);
-    #[derive(Serialize)]
-    struct Context {
-        users: Vec<String>,
-    };
-    let context = Context { users };
-    Template::render("index", &context)
+    let users = get_users(&db);
+    Template::render("index", &users)
 }
 
 #[get("/admin")]
 fn admin(db: State<Database>) -> Template {
-    let users = get_users_names(&db);
-    #[derive(Serialize)]
-    struct Context {
-        users: Vec<String>,
-    }
-    let context = Context { users };
-    Template::render("admin", &context)
+    let users = get_users(&db);
+    Template::render("admin", &users)
 }
 
 #[get("/help")]
@@ -61,10 +52,10 @@ fn privacy(_db: State<Database>) -> Template {
     Template::render("privacy", ())
 }
 
-#[get("/user?<username>&<page>")]
-fn user(db: State<Database>, username: String, page: String) -> Template {
-    let user = db.users.get(username.as_bytes()).unwrap().unwrap();
-    Template::render("user", &user)
+#[get("/user?<u>&<s>")]
+fn user(db: State<Database>, u: String, s: String) -> Template {
+    let user = db.users.get(u.as_bytes()).unwrap().expect("mistake");
+    Template::render(s, &user)
 }
 
 #[get("/skill/<skill>")]

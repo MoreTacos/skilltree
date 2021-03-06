@@ -1,8 +1,11 @@
 {{#*inline "body"}}
 <div class="container">
-    <h1>{{username}}</h1>
-    <div class="tree">
-        {{>tree}}
-    </div>
+    <h1>{{this.username}}</h1>
+    <ul class="tabs">
+    {{#each this.tabs}}
+        <li><a href="/user?u={{@root.userhash}}&s={{this.shortname}}">{{this.fullname}}</a></li>
+    {{/each}}
+    </ul>
+    <div class="tree">{{~> tree}}</div>
 </div>
 {{/inline}} {{>layout}}

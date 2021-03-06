@@ -20,20 +20,19 @@ fn not_found() -> Template {
 
 fn svg_setup() -> () {
     let src_path;
-    let write_path_tree;
+    let write_path;
 
     match Environment::active().expect("config error") {
         Environment::Development => {
-            src_path = "./templates/src/smalltree.svg".to_string();
-            write_path_tree = "./templates/dev_templates/tree.svg.hbs".to_string();
+            src_path = "./templates/dev_templates/src".to_string();
+            write_path = "./templates/dev_templates".to_string();
         }
         Environment::Staging | Environment::Production => {
-            src_path = "./templates/src/fulltree.svg".to_string();
-            write_path_tree = "./templates/prod_templates/tree.svg.hbs".to_string();
+            src_path = "./templates/prod_templates/src".to_string();
+            write_path = "./templates/prod_templates".to_string();
         }
     }
-    let tree = SvgTree::new(&src_path);
-    tree.write(&write_path_tree).unwrap();
+    SvgTree::write_dir(&src_path, &write_path).unwrap();
 }
 
 fn ignite() -> rocket::Rocket {
