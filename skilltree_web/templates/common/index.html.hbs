@@ -9,9 +9,9 @@
     <p>If you want to know more, <a href="/help">check the help page</a></p>
     <h3>View or edit users:</h3>
     <ul class="user-list">
-    {{#each users}}
-        <li><a href="/user/{{this}}">{{this}}</a></li>
-    {{/each}}
+        {{#each this}}
+            <li><a href="/user?u={{this.userhash}}&s=fulltree">{{this.username}}</a></li>
+        {{/each}}
     </ul>
 </div>
 {{/inline}} {{>layout}}

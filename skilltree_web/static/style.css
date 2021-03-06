@@ -54,6 +54,14 @@ body {
     padding: 1em;
 }
 
+.container ul {
+    display: flex;
+}
+
+.container ul li {
+    padding: 1em;
+}
+
 main h5 {
     padding-top: 2em;
 }

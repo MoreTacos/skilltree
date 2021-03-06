@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 use std::fs;
 use std::io;
+use skilltree_core::short_url_tabs;
 
 pub struct Tree {
     svg: String,
@@ -16,6 +17,8 @@ impl Tree {
 
         svg = svg.replace(r"<span>", "");
         svg = svg.replace(r"</span>", "");
+        svg = svg.replace(r###"<?xml version="1.0" encoding="UTF-8"?>"###, "");
+        svg = svg.replace(r###"<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">"###, "");
 
         // The general idea here is to locate the right places using split on a
         // string.
@@ -39,7 +42,9 @@ impl Tree {
         let mut sliced = svg.split(r"<rect");
 
         // Removing the first slice, which is irrelevant
-        let mut svg = sliced.next().unwrap().to_string();
+
+        let mut svg = r###"{{#*inline "tree"}}
+<div>"###.to_string() + sliced.next().unwrap();
 
         let sliced: Vec<_> = sliced.collect();
 
@@ -106,22 +111,22 @@ impl Tree {
                 + &skill
                 + r###"">"###
                 + &skill_exact
-                + r###"</a><input type="range" onchange="fetch(`/api/{{username}}/"###
+                + r###"</a><input type="range" onchange="fetch(`/api/{{this.userhash}}/"###
                 + &skill
                 + r###"/${this.value}`, { method: 'PUT' })" 
                 oninput="this.closest('g').previousElementSibling.style.fill = `rgb(175, ${this.value}, 25)`" 
-                min="0" max="255" value="{{#if skills."###
+                min="0" max="255" value="{{#if this.skills."###
                 + &skill
-                + r###"}}{{skills."###
+                + r###"}}{{this.skills."###
                 + &skill
-                + r###"}}{{else}}0{{/if}}" class="slider">"###;
+                + r###"}}{{else}}0{{/if}}" class="slider"></input>"###;
             let slice = &slice.replacen(&skill_exact, &replace, 1);
 
             // replace fill in slice
             let find = r###"fill="#cce5ff""###;
-            let replace = r###"fill="rgb(175, {{#if skills."###.to_string()
+            let replace = r###"fill="rgb(175, {{#if this.skills."###.to_string()
                 + &skill
-                + r###"}}{{skills."###
+                + r###"}}{{this.skills."###
                 + &skill
                 + r###"}}{{else}}0{{/if}}, 25)""###;
 
@@ -134,6 +139,9 @@ impl Tree {
 
             svg = format!("{}<rect {}", &svg, &slice);
         }
+        
+        svg = svg + r###"</div>
+{{/inline}} {{>user}}"###;
 
         Tree { svg, skills }
     }
@@ -153,7 +161,8 @@ impl Tree {
             let tree = Tree::new(path.to_str().expect("empty path"));
             let mut to_path = PathBuf::new();
             to_path.push(to);
-            to_path.push(entry.file_name().to_str().expect("no file name"));
+            let short_name = short_url_tabs(entry.path().file_stem().unwrap().to_str().unwrap());
+            to_path.push(format!("{}.html.hbs", short_name));
             tree.write_file(&to_path.to_str().unwrap())?;
         }
         Ok(())
