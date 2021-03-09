@@ -3,6 +3,8 @@ use rocket::config::Environment;
 use rocket::response::status;
 use rocket::State;
 use rocket::Route;
+use rocket::Data;
+use std::path::Path;
 use skilltree_core::User;
 use skilltree_core::Database;
 
@@ -81,6 +83,26 @@ fn delete_user(db: State<Database>, username: String) -> status::Accepted<String
     let userhash = User::userhash(&username);
     db.users.remove(&userhash.as_bytes()).unwrap().unwrap();
     status::Accepted(Some(format!("User {} updated successfully", &username)))
+}
+
+#[post("/upload/<name>", data = "<paste>")]
+fn upload_tree(name: String, paste: Data) -> Result<(), std::io::Error> {
+
+    let upload_target;
+
+    match Environment::active().expect("config error") {
+        Environment::Development => {
+            upload_target = "./templates/dev_templates/src";
+        }
+        Environment::Staging | Environment::Production => {
+            upload_target = "./templates/prod_templates/src"
+        }
+    }
+
+    let filename = format!("{}/{} Tree", upload_target, name);
+    paste.stream_to_file(Path::new(&filename))?;
+
+    Ok(())
 }
 
 #[cfg(test)]
