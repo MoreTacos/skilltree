@@ -14,9 +14,9 @@
   <div>
     <h5>Remove users:</h5>
     <ul id="user-list">
-      {% for item in this %}
+      {% for user in users %}
       <li>
-        <p>{{ item.username }}</p>
+        <p>{{ user.username }}</p>
         <button class="remove-user">
           Remove
         </button>

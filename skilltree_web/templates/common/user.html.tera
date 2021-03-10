@@ -2,10 +2,10 @@
 
 {% block body %}
 <div class="container">
-    <h1>{{ this.username }}</h1>
+    <h1>{{ username }}</h1>
     <ul class="tabs">
-    {% for item in this.tabs %}
-        <li><a href="/user?u={{ userhash }}&s={{ item.shortname }}">{{ item.fullname }}</a></li>
+    {% for tab in tabs %}
+        <li><a href="/user?u={{ userhash }}&s={{ tab.shortname }}">{{ tab.fullname }}</a></li>
     {% endfor %}
     </ul>
     <div class="tree">{% block tree %}{{ super() }}{% endblock %}</div>
