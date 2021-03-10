@@ -1,21 +1,13 @@
-use rocket::State;
-use skilltree_core::User;
-use std::fs;
 use rocket::Route;
-use skilltree_core::Database;
+use rocket::State;
 use rocket_contrib::templates::Template;
 use serde::Serialize;
+use skilltree_core::Database;
+use skilltree_core::User;
+use std::fs;
 
 pub fn routes() -> Vec<Route> {
-    routes![
-        index,
-        admin,
-        help,
-        conduct,
-        privacy,
-        user,
-        skill,
-    ]
+    routes![index, admin, help, conduct, privacy, user, skill,]
 }
 
 fn get_users(db: &State<Database>) -> Vec<User> {
@@ -63,11 +55,10 @@ fn skill(_db: State<Database>, skill: String) -> Template {
     let path = format!("./templates/skills/{}.toml", skill);
     let skill = match fs::read_to_string(path) {
         Ok(v) => v,
-        Err(_) => {
-            fs::read_to_string("./templates/skills/missing.toml").expect("failed to read missing skill file")
-        }
+        Err(_) => fs::read_to_string("./templates/skills/missing.toml")
+            .expect("failed to read missing skill file"),
     };
-    
+
     let context: toml::Value = toml::from_str(&skill).unwrap();
 
     Template::render("skill", &context)

@@ -28,3 +28,38 @@ let elements = document.getElementsByClassName("remove-user");
 Array.from(elements).forEach(function(element) {
     element.addEventListener('click', removeUser);
 });
+
+// file upload
+const fileTypes = [
+    "image/svg+xml"
+];
+
+function validFileType(file) {
+    return fileTypes.includes(file.type);
+}
+
+function uploadFile() {
+    file = this.files[0];
+    value = document.getElementById("file-upload").value;
+
+    if (validFileType(file)) {
+        file.text()
+            .then(svg => {
+                fetch(`/admin/upload/${value}`, { method: 'POST', body: svg })
+                    .then(_ => {
+                        alert("Uploaded successfully!")
+                    })
+                    .catch(_ => {
+                        alert("Failed to upload!")
+                    });
+            })
+            .catch(_ => {
+                alert("Error!");
+            });
+    } else {
+        alert("Wrong file type!");
+    }
+    //console.log(file.text());
+}
+
+document.getElementById("input-file").addEventListener('change', uploadFile);
