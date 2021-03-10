@@ -1,0 +1,42 @@
+{% extends "layout" %}
+
+{% block body %}
+<div class="container">
+  <h1>Admin</h1>
+  <div>
+    <h5>Add users:</h5>
+    <label for="name">Name:</label><br />
+    <input id="name-input" type="text" />
+    <button type="submit" id="add-user">
+      Add User
+    </button>
+  </div>
+  <div>
+    <h5>Remove users:</h5>
+    <ul id="user-list">
+      {% for user in users %}
+      <li>
+        <p>{{ user.username }}</p>
+        <button class="remove-user">
+          Remove
+        </button>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div>
+    <h5>Upload Tree</h5>
+    <select id="file-upload" name="file">
+      <option value="FX">FX</option>
+      <option value="PH">PH</option>
+      <option value="SR">SR</option>
+      <option value="VT">VT</option>
+      <option value="PB">PB</option>
+      <option value="HB">HB</option>
+      <option value="Full">Full</option>
+    </select>
+    <input type="file" id="input-file">
+  </div>
+</div>
+<script src="/static/admin.js"></script>
+{% endblock %}

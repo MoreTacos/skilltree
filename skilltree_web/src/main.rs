@@ -13,10 +13,12 @@ use rocket_contrib::templates::Template;
 use skilltree_core::Database;
 use skilltree_svg::Tree as SvgTree;
 use sled_extensions::DbExt;
+use rocket_contrib::templates::tera::Context;
 
 #[catch(404)]
 fn not_found() -> Template {
-    Template::render("error", ())
+    let context = Context::new();
+    Template::render("error", &context)
 }
 
 fn svg_setup() -> () {

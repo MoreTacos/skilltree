@@ -76,7 +76,7 @@ fn upload_tree(tree: String, paste: Data) -> Result<(), std::io::Error> {
         }
         Environment::Staging | Environment::Production => {
             src_path = "./templates/prod_templates/src";
-            write_path = "./templates/dev_templates/src";
+            write_path = "./templates/prod_templates";
         }
     }
 

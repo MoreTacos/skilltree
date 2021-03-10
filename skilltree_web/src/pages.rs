@@ -1,13 +1,13 @@
 use rocket::Route;
 use rocket::State;
 use rocket_contrib::templates::Template;
-use serde::Serialize;
+use rocket_contrib::templates::tera::Context;
 use skilltree_core::Database;
 use skilltree_core::User;
 use std::fs;
 
 pub fn routes() -> Vec<Route> {
-    routes![index, admin, help, conduct, privacy, user, skill,]
+    routes![index, admin, help, conduct, privacy, user]
 }
 
 fn get_users(db: &State<Database>) -> Vec<User> {
@@ -20,36 +20,48 @@ fn get_users(db: &State<Database>) -> Vec<User> {
 #[get("/")]
 fn index(db: State<Database>) -> Template {
     let users = get_users(&db);
-    Template::render("index", &users)
+    let mut context = Context::new();
+    context.insert("users", &users);
+    Template::render("index", &context)
 }
 
 #[get("/admin")]
 fn admin(db: State<Database>) -> Template {
     let users = get_users(&db);
-    Template::render("admin", &users)
+    let mut context = Context::new();
+    context.insert("users", &users);
+    Template::render("admin", &context)
 }
 
 #[get("/help")]
 fn help(_db: State<Database>) -> Template {
-    Template::render("help", ())
+    let context = Context::new();
+    Template::render("help", &context)
 }
 
 #[get("/code-of-conduct")]
 fn conduct(_db: State<Database>) -> Template {
-    Template::render("conduct", ())
+    let context = Context::new();
+    Template::render("conduct", &context)
 }
 
 #[get("/privacy")]
 fn privacy(_db: State<Database>) -> Template {
-    Template::render("privacy", ())
+    let context = Context::new();
+    Template::render("privacy", &context)
 }
 
 #[get("/user?<u>&<s>")]
 fn user(db: State<Database>, u: String, s: String) -> Template {
     let user = db.users.get(u.as_bytes()).unwrap().expect("mistake");
+    let mut context = Context::new();
+    context.insert("username", &user.username);
+    context.insert("userhash", &user.userhash);
+    context.insert("tabs", &user.tabs);
     Template::render(s, &user)
 }
 
+/*
 #[get("/skill/<skill>")]
 fn skill(_db: State<Database>, skill: String) -> Template {
     let path = format!("./templates/skills/{}.toml", skill);
@@ -63,6 +75,7 @@ fn skill(_db: State<Database>, skill: String) -> Template {
 
     Template::render("skill", &context)
 }
+*/
 
 #[cfg(test)]
 mod test {
