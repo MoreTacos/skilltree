@@ -4,6 +4,7 @@
 extern crate rocket;
 
 mod api;
+mod admin;
 mod pages;
 
 use skilltree_core::Database;
@@ -51,6 +52,7 @@ fn ignite() -> rocket::Rocket {
         .mount("/static", StaticFiles::from("static"))
         .mount("/", pages::routes())
         .mount("/api", api::routes())
+        .mount("/admin", admin::routes())
         .register(catchers![not_found])
 }
 

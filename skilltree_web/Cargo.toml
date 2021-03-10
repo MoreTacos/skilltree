@@ -24,4 +24,5 @@ default_features = false
 features = [
 "serve",
 "handlebars_templates",
+"json",
 ]

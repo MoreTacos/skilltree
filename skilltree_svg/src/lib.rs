@@ -5,7 +5,6 @@ use skilltree_core::short_url_tabs;
 
 pub struct Tree {
     svg: String,
-    skills: Vec<String>,
 }
 
 impl Tree {
@@ -44,11 +43,9 @@ impl Tree {
         // Removing the first slice, which is irrelevant
 
         let mut svg = r###"{{#*inline "tree"}}
-<div>"###.to_string() + sliced.next().unwrap();
+<div id="usermeta" value="{{userhash}}">"###.to_string() + sliced.next().unwrap();
 
         let sliced: Vec<_> = sliced.collect();
-
-        let mut skills: Vec<String> = vec![];
 
         for slice in sliced {
             if slice.contains("span") {
@@ -106,44 +103,13 @@ impl Tree {
 
             assert!(skill.clone().chars().all(char::is_alphanumeric));
 
-            // add input after skill
-            let replace = r###"<a href="/skill/"###.to_string()
-                + &skill
-                + r###"">"###
-                + &skill_exact
-                + r###"</a><input type="range" onchange="fetch(`/api/{{this.userhash}}/"###
-                + &skill
-                + r###"/${this.value}`, { method: 'PUT' })" 
-                oninput="this.closest('g').previousElementSibling.style.fill = `rgb(175, ${this.value}, 25)`" 
-                min="0" max="255" value="{{#if this.skills."###
-                + &skill
-                + r###"}}{{this.skills."###
-                + &skill
-                + r###"}}{{else}}0{{/if}}" class="slider"></input>"###;
-            let slice = &slice.replacen(&skill_exact, &replace, 1);
-
-            // replace fill in slice
-            let find = r###"fill="#cce5ff""###;
-            let replace = r###"fill="rgb(175, {{#if this.skills."###.to_string()
-                + &skill
-                + r###"}}{{this.skills."###
-                + &skill
-                + r###"}}{{else}}0{{/if}}, 25)""###;
-
-            "{{#if method}}{{method}}{{else}}POST{{/if}}";
-
-            let slice = &slice.replace(&find, &replace);
-
-            // add skill to vector
-            skills.push(skill.clone());
-
-            svg = format!("{}<rect {}", &svg, &slice);
+            svg = format!(r###"{}<rect class="skill" id="{}" {}"###, &svg, &skill, &slice);
         }
         
         svg = svg + r###"</div>
 {{/inline}} {{>user}}"###;
 
-        Tree { svg, skills }
+        Tree { svg }
     }
 
     fn write_file(self, path: &str) -> io::Result<()> {
