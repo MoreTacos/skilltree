@@ -1,64 +1,22 @@
-use std::collections::HashMap;
-use rocket::config::Environment;
 use rocket::response::status;
-use rocket::State;
 use rocket::Route;
-use skilltree_core::User;
+use rocket::State;
+use rocket_contrib::json::Json;
 use skilltree_core::Database;
 
 pub fn routes() -> Vec<Route> {
-    routes![
-        add_user,
-        rename_user,
-        update_user,
-        delete_user,
-    ]
+    routes![get_user, update_user,]
 }
 
-#[post("/add-user/<username>")]
-fn add_user(db: State<Database>, username: String) -> status::Accepted<String> {
-    let username = username.to_string();
-    let userhash = User::userhash(&username);
-    let skills = HashMap::new();
-
-    let tabs_src;
-
-    match Environment::active().expect("config error") {
-        Environment::Development => {
-            tabs_src = "./templates/dev_templates/src";
-        }
-        Environment::Staging | Environment::Production => {
-            tabs_src = "./templates/prod_templates/src"
-        }
-    }
-
-    let tabs = User::tabs(tabs_src); 
-
-    let user = User {
-        username: username.clone(),
-        userhash: userhash.clone(),
-        skills,
-        tabs,
-    };
-
-    db.users
-        .insert(userhash.clone().as_bytes(), user)
-        .expect("Failed to insert user");
-    status::Accepted(Some(format!("User {} added successfully", &username)))
-}
-
-#[put("/rename/user/<username>/<rename>")]
-fn rename_user(
-    db: State<Database>,
-    username: String,
-    rename: String,
-) -> status::Accepted<String> {
-    let userhash = User::userhash(&username);
-    let mut user = db.users.get(&userhash.as_bytes()).unwrap().unwrap();
-    user.username = rename.clone();
-    db.users.remove(&userhash.as_bytes()).unwrap().unwrap();
-    db.users.insert(rename.clone().as_bytes(), user).expect("Failed to rename user");
-    status::Accepted(Some(format!("User {} renamed successfully", &rename)))
+#[get("/<userhash>/<skill>")]
+fn get_user(db: State<Database>, userhash: String, skill: String) -> Json<usize> {
+    let user = db
+        .users
+        .get(&userhash.as_bytes())
+        .unwrap()
+        .expect("failed to find userhash in database");
+    let value = user.skills.get(&skill).unwrap_or(&0);
+    Json(*value)
 }
 
 #[put("/<userhash>/<skill>/<value>")]
@@ -68,19 +26,16 @@ fn update_user(
     skill: String,
     value: usize,
 ) -> status::Accepted<String> {
-    let mut user = db.users.get(&userhash.as_bytes()).unwrap().expect("Failed to find user with hash");
+    let mut user = db
+        .users
+        .get(&userhash.as_bytes())
+        .unwrap()
+        .expect("Failed to find user with hash");
     user.skills.insert(skill, value);
     db.users
         .insert(userhash.clone().as_bytes(), user)
         .expect("Failed to insert user");
     status::Accepted(Some(format!("User {} modified successfully", &userhash)))
-}
-
-#[delete("/remove-user/<username>")]
-fn delete_user(db: State<Database>, username: String) -> status::Accepted<String> {
-    let userhash = User::userhash(&username);
-    db.users.remove(&userhash.as_bytes()).unwrap().unwrap();
-    status::Accepted(Some(format!("User {} updated successfully", &username)))
 }
 
 #[cfg(test)]

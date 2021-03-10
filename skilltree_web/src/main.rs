@@ -3,15 +3,16 @@
 #[macro_use]
 extern crate rocket;
 
+mod admin;
 mod api;
 mod pages;
 
-use skilltree_core::Database;
 use rocket::config::Environment;
-use sled_extensions::DbExt;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
+use skilltree_core::Database;
 use skilltree_svg::Tree as SvgTree;
+use sled_extensions::DbExt;
 
 #[catch(404)]
 fn not_found() -> Template {
@@ -51,6 +52,7 @@ fn ignite() -> rocket::Rocket {
         .mount("/static", StaticFiles::from("static"))
         .mount("/", pages::routes())
         .mount("/api", api::routes())
+        .mount("/admin", admin::routes())
         .register(catchers![not_found])
 }
 
@@ -63,8 +65,8 @@ fn main() {
 #[cfg(test)]
 mod test {
     use super::ignite;
-    use rocket::local::Client;
     use rocket::http::Status;
+    use rocket::local::Client;
 
     #[test]
     fn big_test1() {
