@@ -42,8 +42,10 @@ impl Tree {
 
         // Removing the first slice, which is irrelevant
 
-        let mut svg = r###"{{#*inline "tree"}}
-<div id="usermeta" value="{{userhash}}">"###.to_string() + sliced.next().unwrap();
+        let mut svg = r###"{% extends "user" %}
+
+{% block tree %}
+<div id="usermeta" value="{{ userhash }}">"###.to_string() + sliced.next().unwrap();
 
         let sliced: Vec<_> = sliced.collect();
 
@@ -107,7 +109,7 @@ impl Tree {
         }
         
         svg = svg + r###"</div>
-{{/inline}} {{>user}}"###;
+{% endblock %}"###;
 
         Tree { svg }
     }
@@ -128,7 +130,7 @@ impl Tree {
             let mut to_path = PathBuf::new();
             to_path.push(to);
             let short_name = short_url_tabs(entry.path().file_stem().unwrap().to_str().unwrap());
-            to_path.push(format!("{}.html.hbs", short_name));
+            to_path.push(format!("{}.html.tera", short_name));
             tree.write_file(&to_path.to_str().unwrap())?;
         }
         Ok(())

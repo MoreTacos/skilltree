@@ -1,0 +1,9 @@
+{% extends "layout" %}
+
+{% block body %}
+<div class="container">
+    <h1>404 Error. The URL is invalid. No handlers on the server for this route.</h1>
+    <p>Return to <a href="/admin">main</a> page</p>
+    </ul>
+</div>
+{% endblock %}

@@ -1,7 +1,7 @@
 use rocket::Route;
 use rocket::State;
 use rocket_contrib::templates::Template;
-use serde::Serialize;
+use rocket_contrib::templates::tera::Context;
 use skilltree_core::Database;
 use skilltree_core::User;
 use std::fs;
@@ -20,6 +20,8 @@ fn get_users(db: &State<Database>) -> Vec<User> {
 #[get("/")]
 fn index(db: State<Database>) -> Template {
     let users = get_users(&db);
+    let mut context = Context::new();
+    context.insert("users", &users);
     Template::render("index", &users)
 }
 
