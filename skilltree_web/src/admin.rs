@@ -3,6 +3,7 @@ use rocket::response::status;
 use rocket::Data;
 use rocket::Route;
 use rocket::State;
+use rocket_contrib::templates::Metadata;
 use skilltree_core::Database;
 use skilltree_core::User;
 use skilltree_svg::Tree as SvgTree;
@@ -65,7 +66,7 @@ fn delete_user(db: State<Database>, username: String) -> status::Accepted<String
 }
 
 #[post("/upload/<tree>", data = "<paste>")]
-fn upload_tree(tree: String, paste: Data) -> Result<(), std::io::Error> {
+fn upload_tree(tree: String, paste: Data) {
     let src_path;
     let write_path;
 
@@ -81,11 +82,9 @@ fn upload_tree(tree: String, paste: Data) -> Result<(), std::io::Error> {
     }
 
     let filename = format!("{}/skilltree-{} Tree.svg", src_path, tree);
-    paste.stream_to_file(Path::new(&filename))?;
+    paste.stream_to_file(Path::new(&filename)).expect("failed to write file");
 
     SvgTree::write_dir(&src_path, &write_path).unwrap();
-
-    Ok(())
 }
 
 #[cfg(test)]

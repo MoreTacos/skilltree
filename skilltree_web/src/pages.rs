@@ -2,9 +2,9 @@ use rocket::Route;
 use rocket::State;
 use rocket_contrib::templates::Template;
 use rocket_contrib::templates::tera::Context;
+use rocket_contrib::templates::Metadata;
 use skilltree_core::Database;
 use skilltree_core::User;
-use std::fs;
 
 pub fn routes() -> Vec<Route> {
     routes![index, admin, help, conduct, privacy, user]
