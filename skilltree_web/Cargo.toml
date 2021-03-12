@@ -16,10 +16,10 @@ sled-extensions = { version = "0.2.0", features = ["bincode"] }
 toml = "0.5"
 
 [dependencies.rocket]
-path = "../../Rocket/core/lib"
+version = "0.4"
 
 [dependencies.rocket_contrib]
-path = "../../Rocket/contrib/lib"
+version = "0.4"
 default_features = false
 features = [
 "serve",
