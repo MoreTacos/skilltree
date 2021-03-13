@@ -2,10 +2,12 @@
 
 #[macro_use]
 extern crate rocket;
+extern crate crypto;
 
 mod admin;
 mod api;
 mod pages;
+mod core;
 
 use rocket::config::Environment;
 use rocket_contrib::serve::StaticFiles;
@@ -13,8 +15,6 @@ use rocket::config::Value;
 use rocket_contrib::templates::Template;
 use rocket_contrib::templates::Engines;
 use rocket_contrib::templates::tera::ast::FunctionCall;
-use skilltree_core::Database;
-use skilltree_svg::Tree as SvgTree;
 use sled_extensions::DbExt;
 use rocket_contrib::templates::tera::Context;
 
@@ -49,7 +49,7 @@ fn ignite() -> rocket::Rocket {
 
     rocket::ignite()
         .attach(Template::fairing())
-        .manage(Database {
+        .manage(core::Database {
             users: db
                 .open_bincode_tree("users")
                 .expect("failed to open user tree"),
