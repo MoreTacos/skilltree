@@ -1,0 +1,14 @@
+{% extends "layout" %}
+
+{% block body %}
+<div class="container">
+    <h1>Sign in to Skilltree</h1>
+    <form action="/login/{{ return_to }}" method="post" accept-charset="utf-8">
+        <fieldset>
+            <div>
+                <label for="username">Username or email address
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

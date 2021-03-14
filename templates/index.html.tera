@@ -1,0 +1,18 @@
+{% extends "layout" %}
+
+{% block body %}
+<div class="container">
+    <h1>Log your progress using a skill tree</h1>
+    <img src="./static/img/skilltree.png" />
+    <h2>What is a skill tree?</h2>
+    <p>A visual tool that can be used to plan and track your gymnastics progress.</p>
+    <p>If you want to know more, <a href="/help">check out the help page</a></p>
+    <p>If you are an administrator, <a href="/login">Then login here</a></p>
+    <h2>Some gyms currently using skilltree</h2>
+    <ul class="user-list">
+        {% for gym in gyms %}
+            <li><a href="/{{ gym.url }}">{{ gym.name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

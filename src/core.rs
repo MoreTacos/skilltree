@@ -1,5 +1,5 @@
-use self::crypto::digest::Digest;
-use self::crypto::sha1::Sha1;
+use crypto::digest::Digest;
+use crypto::sha1::Sha1;
 use serde::Deserialize;
 use serde::Serialize;
 use sled_extensions::bincode::Tree;
