@@ -58,7 +58,10 @@ impl Tree {
             let mut search_domain = slice.to_string().clone();
 
             // closer to answer 1
-            let from = search_domain.find("word-wrap").unwrap();
+            let from = match search_domain.find("word-wrap") {
+                Some(x) => x,
+                None => 0,
+            };
             search_domain = search_domain[from..].to_string();
 
             let from = search_domain.find(">").unwrap();
