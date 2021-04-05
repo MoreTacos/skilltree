@@ -2,7 +2,8 @@ use rocket::Route;
 use rocket::State;
 use rocket_contrib::templates::Template;
 use rocket_contrib::templates::tera::Context;
-use rocket_contrib::templates::Metadata;
+use rocket_contrib::templates::tera::Tera;
+use rocket::config::Environment;
 use skilltree_core::Database;
 use skilltree_core::User;
 
@@ -52,13 +53,29 @@ fn privacy(_db: State<Database>) -> Template {
 }
 
 #[get("/user?<u>&<s>")]
-fn user(db: State<Database>, u: String, s: String) -> Template {
+fn user(db: State<Database>, u: String, s: String) -> rocket::response::content::Html<String> {
     let user = db.users.get(u.as_bytes()).unwrap().expect("mistake");
     let mut context = Context::new();
     context.insert("username", &user.username);
     context.insert("userhash", &user.userhash);
     context.insert("tabs", &user.tabs);
-    Template::render(s, &user)
+    let mut tera = Tera::default();
+
+    let tpath;
+
+    match Environment::active().expect("config error") {
+        Environment::Development => {
+            tpath = "dev_templates".to_string();
+        }
+        Environment::Staging | Environment::Production => {
+            tpath = "prod_templates".to_string();
+        }
+    }
+
+    tera.add_template_file(format!("./templates/{}/layout.html.tera", &tpath), Some("layout")).unwrap();
+    tera.add_template_file(format!("./templates/{}/user.html.tera", &tpath), Some("user")).unwrap();
+    tera.add_template_file(format!("./templates/{}/{}.html.tera", &tpath, &s), Some(&s)).unwrap();
+    rocket::response::content::Html(tera.render(&s, &context).unwrap())
 }
 
 /*
