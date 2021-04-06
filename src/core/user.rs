@@ -2,14 +2,7 @@ use crypto::digest::Digest;
 use crypto::sha1::Sha1;
 use serde::Deserialize;
 use serde::Serialize;
-use sled_extensions::bincode::Tree;
 use std::collections::HashMap;
-use std::fs;
-use std::path::Path;
-use rocket_contrib::serve::StaticFiles;
-use rocket_contrib::templates::Template;
-use sled_extensions::DbExt;
-use rocket_contrib::templates::tera::Context;
 
 type Hash = String;
 

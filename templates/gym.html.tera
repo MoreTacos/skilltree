@@ -1,0 +1,7 @@
+{% extends "layout" %}
+
+{% block body %}
+<div class="container">
+    <h1>{{ gym.name }}</h1>
+</div>
+{% endblock %}

@@ -6,12 +6,13 @@ extern crate crypto;
 
 mod core;
 mod pages;
+mod api;
 
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 use sled_extensions::DbExt;
 use rocket_contrib::templates::tera::Context;
-use crate::core::database::Database;
+use crate::core::Database;
 
 #[catch(404)]
 fn not_found() -> Template {
@@ -34,6 +35,7 @@ fn ignite() -> rocket::Rocket {
         })
         .mount("/static", StaticFiles::from("static"))
         .mount("/", pages::base::routes())
+        .mount("/api/gym", api::routes())
         .register(catchers![not_found])
 }
 
