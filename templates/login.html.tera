@@ -1,0 +1,14 @@
+{% extends "layout" %}
+
+{% block body %}
+<div class="container">
+    <h1>Login Page</h1>
+    <form action="/login" method="post">
+        <label for="gname">Gym Name:</label><br>
+        <input type="text" id="gname" name="gname"><br>
+        <label for="pw">Password:</label><br>
+        <input type="text" id="pw" name="pw"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+{% endblock %}

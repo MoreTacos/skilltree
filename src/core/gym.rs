@@ -3,20 +3,23 @@ use serde::Serialize;
 use super::user::User;
 use std::fs;
 use std::path::Path;
+use pwhash::bcrypt;
 
 // make sure that when removing users, they are not athletes of
 // anybody else in the gym! If so then remove pointer
 #[derive(Deserialize, Serialize, Clone, Debug, Default)]
 pub struct Gym {
     pub name: String,
+    pub pwhash: String,
     pub url: String,
     pub users: Vec<User>,
     pub tabs: Vec<Tab>,
 }
 
 impl Gym {
-    pub fn new(name: String, tabs_path: String) -> Self {
+    pub fn new(name: String, pw: String, tabs_path: String) -> Self {
         let users: Vec<User> = vec![];
+        let pwhash = bcrypt::hash(pw).unwrap();
         let url = name.clone().split_whitespace()
             .collect::<String>()
             .chars()
@@ -24,7 +27,7 @@ impl Gym {
             .collect::<String>()
             .to_lowercase();
         let tabs = Tab::source_path(&tabs_path);
-        Gym { name, url, users, tabs }
+        Gym { name, pwhash, url, users, tabs }
     }
 }
 

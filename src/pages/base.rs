@@ -6,9 +6,11 @@ use rocket::State;
 use rocket_contrib::templates::Template;
 use rocket_contrib::templates::tera::Context;
 use rocket_contrib::templates::tera::Tera;
+use rocket::http::{Cookie, Cookies};
+use rocket::response::{Flash, Redirect};
 
 pub fn routes() -> Vec<Route> {
-    routes![index, gym, demo, help, conduct, privacy]
+    routes![index, gym, login, demo, help, conduct, privacy]
 }
 
 #[get("/")]
@@ -27,10 +29,22 @@ fn gym(db: State<Database>, gym: String) -> Template {
     Template::render("gym", &context)
 }
 
+#[get("/login")]
+fn login(db: State<Database>) -> Template {
+    let mut context = Context::new();
+    Template::render("login", &context)
+}
+
+#[post("/login")]
+fn login_token(db: State<Database>, mut cookies: Cookies) -> Flash<Redirect> {
+    cookies.add_private(Cookie::named("login"));
+    Flash::success(Redirect::to("/"), "Successfully logged in.")
+}
+
 #[get("/demo")]
 fn demo(db: State<Database>) -> rocket::response::content::Html<String> {
     let mut context = Context::new();
-    let gym = Gym::new("demo".to_string(), "./templates/src".to_string());
+    let gym = Gym::new("demo".to_string(), "".to_string(),"./templates/src".to_string());
     context.insert("tabs", &gym.tabs.clone());
     context.insert("username", "Demo");
     context.insert("userhash", "");

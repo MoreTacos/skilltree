@@ -18,14 +18,16 @@ const H: &'static str = "$2y$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/m
 struct Auth {
     name: String,
     pw: String,
+    globalpw: String,
 }
 
 #[post("/create_gym", data = "<auth>")]
 fn create_gym(mut db: State<Database>, auth: Form<Auth>) -> Result<status::Accepted<String>, status::Unauthorized<String>> {
+    let globalpw = auth.globalpw.clone();
     let pw = auth.pw.clone();
     let name = auth.name.clone();
     if bcrypt::verify(&pw, H) {
-        db.create_gym(name.clone(), "./templates/src".to_string()).unwrap();
+        db.create_gym(name.clone(), pw,"./templates/src".to_string()).unwrap();
         Ok(status::Accepted(Some(format!("Successfully created gym {}", &name))))
     } else {
         Err(status::Unauthorized(Some(format!("Wrong password. {} could not be created.", &name))))
@@ -34,6 +36,7 @@ fn create_gym(mut db: State<Database>, auth: Form<Auth>) -> Result<status::Accep
 
 #[get("/read_gyms")]
 fn read_gyms(db: State<Database>) -> Json<Vec<Gym>> {
+    dbg!(db.get_gyms());
     Json(db.get_gyms())
 }
 

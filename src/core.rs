@@ -7,20 +7,22 @@ pub use gym::Gym;
 use sled_extensions::bincode::Tree;
 use std::error::Error;
 use rocket::State;
+use pwhash::bcrypt;
 
 pub struct Database {
     pub gyms: Tree<Gym>,
 }
 
 pub trait DatabaseExt {
-    fn create_gym(&mut self, name: String, tabs_path: String) -> Result<(), Box<dyn Error>>;
+    fn create_gym(&mut self, name: String, pw: String, tabs_path: String) -> Result<(), Box<dyn Error>>;
     fn get_gym_url(&self, name: String) -> Result<Option<Gym>, Box<dyn Error>>;
     fn get_gyms(&self) -> Vec<Gym>;
+    fn verify_gym(&self, url: String, pw: String) -> bool;
 }
 
 impl DatabaseExt for State<'_, Database> {
-    fn create_gym(&mut self, name: String, tabs_path: String) -> Result<(), Box<dyn Error>> {
-        let gym = Gym::new(name, tabs_path);
+    fn create_gym(&mut self, name: String, pw: String, tabs_path: String) -> Result<(), Box<dyn Error>> {
+        let gym = Gym::new(name, pw, tabs_path);
         self.gyms.insert(gym.url.clone().as_bytes(), gym)?;
         Ok(())
     }
@@ -29,5 +31,12 @@ impl DatabaseExt for State<'_, Database> {
     }
     fn get_gyms(&self) -> Vec<Gym> {
         self.gyms.iter().map(|x| x.unwrap().1).collect()
+    }
+    fn verify_gym(&self, url: String, pw: String) -> bool {
+        let hash = match self.gyms.get(url.as_bytes()).unwrap() {
+            Some(x) => x.pwhash,
+            None => "".to_string(),
+        };
+        bcrypt::verify(&pw, &hash)
     }
 }
