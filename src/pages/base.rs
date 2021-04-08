@@ -42,6 +42,8 @@ fn login_token(db: State<Database>, mut cookies: Cookies) -> Flash<Redirect> {
 }
 
 #[get("/demo")]
+
+#[get("/demo&<s>")]
 fn demo(db: State<Database>) -> rocket::response::content::Html<String> {
     let mut context = Context::new();
     let gym = Gym::new("demo".to_string(), "".to_string(),"./templates/src".to_string());
