@@ -3,6 +3,7 @@ mod gym;
 
 pub use user::User;
 pub use gym::Gym;
+pub use gym::Tab;
 
 use sled_extensions::bincode::Tree;
 use std::error::Error;
@@ -11,6 +12,7 @@ use pwhash::bcrypt;
 
 pub struct Database {
     pub gyms: Tree<Gym>,
+    pub demo: Vec<Tab>,
 }
 
 pub trait DatabaseExt {
@@ -18,6 +20,8 @@ pub trait DatabaseExt {
     fn get_gym_url(&self, name: String) -> Result<Option<Gym>, Box<dyn Error>>;
     fn get_gyms(&self) -> Vec<Gym>;
     fn verify_gym(&self, url: String, pw: String) -> bool;
+    fn add_user(&self, url: String, user: User) -> Result<(), Box<dyn Error>>;
+    fn remove_user(&self, gymurl: String, username: String) -> Result<(), Box<dyn Error>>;
 }
 
 impl DatabaseExt for State<'_, Database> {
@@ -38,5 +42,23 @@ impl DatabaseExt for State<'_, Database> {
             None => "".to_string(),
         };
         bcrypt::verify(&pw, &hash)
+    }
+    fn add_user(&self, gymurl: String, user: User) -> Result<(), Box<dyn Error>> {
+        let mut gym = self.gyms.get(gymurl.as_bytes())?.unwrap();
+
+        let mut users = self.gyms.get(gymurl.as_bytes())?.unwrap().users;
+        users.push(user);
+
+        gym.users = users;
+
+        self.gyms.insert(gymurl.as_bytes(), gym)?;
+        Ok(())
+    }
+    fn remove_user(&self, gymurl: String, username: String) -> Result<(), Box<dyn Error>> {
+        let mut gym = self.gyms.get(gymurl.as_bytes())?.unwrap();
+        gym.users = gym.users.into_iter().filter(|x| x.name != username).collect::<Vec<_>>();
+        dbg!(&gym);
+        self.gyms.insert(gymurl.as_bytes(), gym)?;
+        Ok(())
     }
 }

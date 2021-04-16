@@ -9,7 +9,7 @@ use rocket::response::status;
 use crate::core::DatabaseExt;
 
 pub fn routes() -> Vec<Route> {
-    routes![create_gym, read_gyms]
+    routes![create_gym, read_gyms, demo]
 }
 
 const H: &'static str = "$2y$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe";
@@ -21,18 +21,24 @@ struct Auth {
     globalpw: String,
 }
 
+#[get("/demo")]
+fn demo() -> Json<i32> {
+    Json(0)
+}
+
 #[post("/create_gym", data = "<auth>")]
 fn create_gym(mut db: State<Database>, auth: Form<Auth>) -> Result<status::Accepted<String>, status::Unauthorized<String>> {
     let globalpw = auth.globalpw.clone();
     let pw = auth.pw.clone();
     let name = auth.name.clone();
-    if bcrypt::verify(&pw, H) {
+    if bcrypt::verify(&globalpw, H) {
         db.create_gym(name.clone(), pw,"./templates/src".to_string()).unwrap();
         Ok(status::Accepted(Some(format!("Successfully created gym {}", &name))))
     } else {
         Err(status::Unauthorized(Some(format!("Wrong password. {} could not be created.", &name))))
     }
 }
+
 
 #[get("/read_gyms")]
 fn read_gyms(db: State<Database>) -> Json<Vec<Gym>> {

@@ -18,6 +18,10 @@
         {% if isathlete %}
           <li><a href="/">My Skills</a></li>
         {% endif %}
+        {% if isadmin %}
+          <li><a href="/admin">Dashboard</a></li>
+          <li><a href="/logout">Logout</a></li>
+        {% endif %}
         </ul>
       </header>
         <main>

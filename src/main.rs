@@ -13,6 +13,7 @@ use rocket_contrib::templates::Template;
 use sled_extensions::DbExt;
 use rocket_contrib::templates::tera::Context;
 use crate::core::Database;
+use crate::core::Tab;
 
 #[catch(404)]
 fn not_found() -> Template {
@@ -26,16 +27,19 @@ fn ignite() -> rocket::Rocket {
         .open()
         .expect("Failed to open sled DB");
 
+    let tabs = Tab::source_path("./templates/src");
+
     rocket::ignite()
         .attach(Template::fairing())
         .manage(Database {
             gyms: db
                 .open_bincode_tree("gyms")
                 .expect("failed to open gym tree"),
+            demo: tabs,
         })
         .mount("/static", StaticFiles::from("static"))
         .mount("/", pages::base::routes())
-        .mount("/api/gym", api::routes())
+        .mount("/api", api::routes())
         .register(catchers![not_found])
 }
 
