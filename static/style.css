@@ -3,138 +3,78 @@
     margin: 0;
     box-sizing: border-box;
     text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    color: white;
 }
 
-a {
-    color: #007bff;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Nobile', Georgia, Times, serif;
-}
-
-p, div, li {
-    font-family: 'Nobile', Helvetica, Arial, sans-serif;
-}
-
-.main-header h5 {
-    padding: 0.5em;
+body {
+    max-width: 1150px;
+    background: #2F303A;
+    margin: auto;
 }
 
 header {
     display: flex;
-    background: #e0e0e0;
-    padding: 0.8em;
+    justify-content: space-between;
+    padding: 0 2em;
 }
 
-header h5 {
-    padding-right: 2em;
-    font-size: 1.2em;
+.logo {
+    display: flex;
+}
+
+.logo p {
+    padding: 0.8em 0.4em;
+    font-size: 2em;
 }
 
 header ul {
-    display: flex;
     list-style: none;
+    display: flex;
 }
 
 header ul li {
-    align-self: center;
-    padding: 0.6em;
-}
-
-header ul li a {
-    padding: 0.5;
-}
-
-body {
-    background: url(/static/img/cream_dust.png) repeat 0 0;
+    padding: 1em;
 }
 
 .container {
-    padding: 1em;
-}
-
-.container ul {
     display: flex;
 }
 
-.container ul li {
-    padding: 1em;
+.left {
+    width: 50%;
 }
 
-main h5 {
-    padding-top: 2em;
-}
-
-main h1 {
-    padding-top: 0.2em;
-    padding-bottom: 0.2em;
-}
-
-main ul {
-    list-style: none;
-}
-
-main ul li {
-    padding-bottom: 1em;
-}
-
-main h3 {
-    padding-bottom: 0.5em;
-    padding-top: 0.5em;
-}
-
-main h2 {
-    padding-bottom: 0.5em;
-    padding-top: 0.5em;
-}
-
-main img {
-    padding-top: 1em;
-    padding-bottom: 2em;
-    max-height: 30vh;
-    max-width: 95vw;
-}
-
-main p {
-    padding-bottom: 1em;
-}
-
-.user-list li {
-    padding-left: 1em;
-}
-
-.tree {
+.left img {
+    padding: 3em;
     width: 100%;
-    overflow: scroll;
-    border: 1px solid black;
 }
 
-input[type=range] {
-  width: 80%;
+.right {
+    width: 50%;
+}
+
+.right h1 {
+    margin-top: 3em;
+    font-weight: normal;
+}
+
+.right h3 {
+    margin-top: 1em;
+    font-weight: normal;
+}
+
+.right button {
+    background-color: #1762A7;
+    padding: 1em 3em;
+    border: none;
+    margin-top: 10vh;
 }
 
 svg {
-    background-color: rgba(255, 255, 255, 0) !important;
+    background-color: #2F303A !important;
 }
 
 svg a {
     color: black;
-}
-
-footer {
-    width: 100%;
-}
-
-footer ul {
-    list-style: none;
-    justify-content: space-evenly;
-    background: #e0e0e0;
-    padding: 0.5em;
-    font-size: 0.8em;
-    padding-left: 3em;
-}
-
-footer ul li {
-    padding: 0.2em;
 }

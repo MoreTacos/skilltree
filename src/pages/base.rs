@@ -19,10 +19,9 @@ pub fn routes() -> Vec<Route> {
 }
 
 #[get("/", rank = 2)]
-fn index(db: State<Database>) -> Template {
+fn index() -> Template {
     let mut context = Context::new();
-    let gyms: Vec<Gym> = db.get_gyms();
-    context.insert("gyms", &gyms);
+    context.insert("isindex", &true);
     Template::render("index", &context)
 }
 
