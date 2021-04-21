@@ -5,15 +5,14 @@ extern crate rocket;
 extern crate crypto;
 
 mod core;
-mod pages;
-mod api;
+mod routes;
 
-use rocket_contrib::serve::StaticFiles;
-use rocket_contrib::templates::Template;
-use sled_extensions::DbExt;
-use rocket_contrib::templates::tera::Context;
 use crate::core::Database;
 use crate::core::Tab;
+use rocket_contrib::serve::StaticFiles;
+use rocket_contrib::templates::tera::Context;
+use rocket_contrib::templates::Template;
+use sled_extensions::DbExt;
 
 #[catch(404)]
 fn not_found() -> Template {
@@ -38,8 +37,9 @@ fn ignite() -> rocket::Rocket {
             demo: tabs,
         })
         .mount("/static", StaticFiles::from("static"))
-        .mount("/", pages::base::routes())
-        .mount("/api", api::routes())
+        .mount("/", routes::index())
+        .mount("/", routes::sudo())
+        .mount("/", routes::admin())
         .register(catchers![not_found])
 }
 

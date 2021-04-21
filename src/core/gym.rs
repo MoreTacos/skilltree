@@ -1,15 +1,16 @@
+use super::user::User;
+use pwhash::bcrypt;
 use serde::Deserialize;
 use serde::Serialize;
-use super::user::User;
 use std::fs;
 use std::path::Path;
-use pwhash::bcrypt;
 
 // make sure that when removing users, they are not athletes of
 // anybody else in the gym! If so then remove pointer
 #[derive(Deserialize, Serialize, Clone, Debug, Default)]
 pub struct Gym {
     pub name: String,
+    pub email: String,
     pub pwhash: String,
     pub url: String,
     pub users: Vec<User>,
@@ -17,17 +18,26 @@ pub struct Gym {
 }
 
 impl Gym {
-    pub fn new(name: String, pw: String, tabs_path: String) -> Self {
+    pub fn new(name: String, email: String, pw: String, tabs_path: String) -> Self {
         let users: Vec<User> = vec![];
         let pwhash = bcrypt::hash(pw).unwrap();
-        let url = name.clone().split_whitespace()
+        let url = name
+            .clone()
+            .split_whitespace()
             .collect::<String>()
             .chars()
             .filter(|c| "ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(c.clone()))
             .collect::<String>()
             .to_lowercase();
         let tabs = Tab::source_path(&tabs_path);
-        Gym { name, pwhash, url, users, tabs }
+        Gym {
+            name,
+            email,
+            pwhash,
+            url,
+            users,
+            tabs,
+        }
     }
 }
 
@@ -121,14 +131,15 @@ impl Tab {
             + r###"</div>
 {% endblock %}"###;
 
-        let url = name.clone()
-                .split_whitespace()
-                .collect::<String>()
-                .chars()
-                .filter(|c| c.is_alphanumeric())
-                .collect::<String>()
-                .to_lowercase()
-                .replace("skilltree", "");
+        let url = name
+            .clone()
+            .split_whitespace()
+            .collect::<String>()
+            .chars()
+            .filter(|c| c.is_alphanumeric())
+            .collect::<String>()
+            .to_lowercase()
+            .replace("skilltree", "");
 
         Tab { name, url, svg }
     }

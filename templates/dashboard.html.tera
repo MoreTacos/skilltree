@@ -1,0 +1,52 @@
+{% extends "layout" %}
+
+{% block body %}
+<div class="container">
+<div class="dashboard">
+    <div class="dashboard-header">
+    <h3>{{ name }} Dashboard</h3>
+    <div class="dashboard-options">
+    <div class="search">
+        <label id="search">Search</label>
+        <input type="text" for="search" name="search">
+    </div>
+    <div class="coach-filter">
+        <p>
+        <label id="coach-filter">Coach?</label>
+        <input type="checkbox" for="coach-filter" name="coach-filter">
+        </p>
+    </div>
+    <div class="new-button">
+        <div id="bg-cover"></div>
+        <button id="new-user-button">New User</button>
+        <div id="new-user-form">
+        <form action="#" onsubmit="return false">
+            <input type="text" id="name" placeholder="full name">
+            <label for="iscoach">Coach?</label>
+            <input id="iscoach" type="checkbox">
+            <label for="tabs" class="block">Tabs</label>
+            <select id="tabs" name="tabs">
+                <option value="rec">Recreational</option>
+                <option value="adv-rec-boys">Boys Advanced Recreational</option>
+                <option value="adv-rec-girls">Girls Advanced Recreational</option>
+                <option value="mens-comp">Men's Competitive</option>
+                <option value="womans-comp">Woman's Competitive</option>
+            </select>
+            <button id="add-user-button">Add User</button>
+            <button id="close-user-button">Cancel</button>
+        </form>
+        </div>
+    </div>
+    </div>
+    </div>
+    <table id="table">
+        <tr class="thead">
+            <th>Who?</th>
+            <th>Athletes?</th>
+            <th>Tabs</th>
+        </tr>
+    </table>
+</div>
+<script src="./static/dashboard.js"></script>
+</div>
+{% endblock %}

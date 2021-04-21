@@ -19,11 +19,11 @@ header {
     padding: 0 2em;
 }
 
-.logo {
+.logo a {
     display: flex;
 }
 
-.logo p {
+.logo a p {
     padding: 0.8em 0.4em;
     font-size: 2em;
 }
@@ -34,11 +34,13 @@ header ul {
 }
 
 header ul li {
-    padding: 1em;
+    padding: 0 1em;
+    margin: auto;
 }
 
 .container {
     display: flex;
+    margin-top: 3em;
 }
 
 .left {
@@ -46,8 +48,6 @@ header ul li {
 }
 
 .left img {
-    padding: 3em;
-    padding-top: 5em;
     width: 100%;
 }
 
@@ -56,20 +56,142 @@ header ul li {
 }
 
 .right h1 {
-    margin-top: 3em;
     font-weight: normal;
 }
 
 .right h3 {
-    margin-top: 1em;
     font-weight: normal;
 }
 
-.right button {
+button {
     background-color: #1762A7;
-    padding: 1em 3em;
     border: none;
-    margin-top: 10vh;
+    padding: 1em 4em;
+}
+
+form {
+    background-color: #000533;
+    border-radius: 10px;
+    padding: 2em;
+    max-width: 400px;
+    margin: auto;
+}
+
+label {
+    font-size: 1.3em;
+}
+
+input {
+    margin: 1em 0;
+    padding: 0.4em 0;
+    border-color: #1762A7;
+    background-color: #000533;
+}
+
+#email {
+    width: 100%;
+}
+
+#pw {
+    width: 100%;
+}
+
+.submit {
+    background-color: #1762A7;
+    border: none;
+    padding: 1em 4em;
+    display: block;
+    margin: auto;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dashboard-header h3 {
+    align-self: center;
+}
+
+.dashboard {
+    width: 100%;
+}
+
+.dashboard-options {
+    display: flex;
+    justify-content: space-between;
+}
+
+.coach-filter {
+    align-self: center;
+}
+
+.new-button {
+    align-self: center;
+}
+
+.dashboard-options div {
+    padding: 0 1em;
+}
+
+#new-user-form {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9;
+}
+
+#bg-cover {
+    display: none;
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+}
+
+#new-user-form form input {
+    padding: 1em 0;
+}
+
+#new-user-form form label {
+    padding: 1em 0;
+}
+
+#new-user-form form .block {
+    display: block;
+}
+
+#new-user-form form .button {
+    background-color: #1762A7;
+    border: none;
+    padding: 1em 4em;
+    margin: 1em 0;
+}
+
+#new-user-form form select {
+    padding: 1em;
+}
+
+#new-user-form form button {
+    margin: 1em 0;
+}
+
+select {
+    color: black;
+}
+
+option {
+    color: black;
+}
+
+table {
+    margin-top: 1em;
+    width: 100%;
+}
+
+th {
+    text-align: left;
 }
 
 svg {
