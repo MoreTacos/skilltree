@@ -18,7 +18,7 @@ use rocket::request::{self, Request, FromRequest};
 use rocket_contrib::json::Json;
 
 pub fn admin() -> Vec<Route> {
-    routes![base, login, dashboard, logout, add_user]
+    routes![base, login, dashboard, logout, add_user, remove_user]
 }
 
 #[derive(FromForm)]
@@ -36,7 +36,7 @@ fn base(gym: Gym) -> Template {
 
 #[post("/login", data="<login>")]
 fn login(db: State<Database>, mut cookies: Cookies, login: Form<Login>) -> Redirect {
-    if db.verify_gym(login.email.clone(), login.pw.clone()) {
+    if db.verify_gym(&login.email, &login.pw) {
         cookies.add_private(Cookie::new("email", login.email.to_string()));
         Redirect::to("/dashboard")
     } else {
@@ -49,6 +49,7 @@ fn dashboard(db: State<Database>, gym: Gym) -> Template {
     let mut context = Context::new();
     context.insert("isadmin", &true);
     context.insert("name", &gym.name);
+    context.insert("gymurl", &gym.url);
     context.insert("users", &gym.users);
     Template::render("dashboard", &context)
 }
@@ -65,9 +66,33 @@ fn add_user(db: State<Database>, gym: Gym, user: Json<AddUser>) -> Json<String> 
     let name: String = user.name.clone();
     let skills: HashMap<String, usize> = HashMap::new();
     let athletes: Vec<String> = vec![];
-    let user: User = User::new(name, skills, athletes);
-    db.add_user(gym.email, user.clone()).unwrap();
-    Json("Added User".to_string())
+    let tabs: Vec<String> = {
+        if user.tabs == "rec" {
+            vec!["fxtree".to_string(), "hbtree".to_string()]
+        } else if user.tabs == "adv-rec-boys" {
+            vec!["pbtree".to_string(), "phtree".to_string()]
+        } else if user.tabs == "adv-rec-girls" {
+            vec!["fxtree".to_string(), "vttree".to_string()]
+        } else if user.tabs == "mens-comp" {
+            vec!["fxtree".to_string(), "phtree".to_string(), "srtree".to_string(), "vttree".to_string(), "pbtree".to_string(), "hbtree".to_string()]
+        } else {
+            vec!["fxtree".to_string(), "fulltree".to_string()]
+        }
+    };
+    let user: User = User::new(name, skills, athletes, tabs);
+    db.add_user(&gym.email, user.clone()).unwrap();
+    Json(user.hash)
+}
+
+#[derive(Debug, PartialEq, Eq, Deserialize)]
+struct RemoveUser {
+    hash: String,
+}
+
+#[delete("/remove-user", data="<user>")]
+fn remove_user(db: State<Database>, gym: Gym, user: Json<RemoveUser>) -> Json<String> {
+    db.remove_user(&gym.email, &user.hash).unwrap();
+    Json("Removed User".to_string())
 }
 
 #[get("/logout")]

@@ -1,35 +1,34 @@
-use crypto::digest::Digest;
-use crypto::sha1::Sha1;
 use serde::Deserialize;
 use serde::Serialize;
 use std::collections::HashMap;
+use pwhash::bcrypt;
 
-type Hash = String;
+type Hash = String; // the userhash
+type Url = String; // the tab's url
 
 #[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct User {
     pub name: String,
+    pub hash: Hash,
     pub skills: HashMap<String, usize>,
     pub athletes: Vec<Hash>,
+    pub tabs: Vec<Url>,
 }
 
 impl User {
-    pub fn new(name: String, skills: HashMap<String, usize>, athletes: Vec<Hash>) -> Self {
+    pub fn new(name: String, skills: HashMap<String, usize>, athletes: Vec<Hash>, tabs: Vec<Url>) -> Self {
+        let mut hash: String = bcrypt::hash(&name).unwrap().to_lowercase().chars().filter(|c| c.is_alphanumeric()).collect();
+        hash.truncate(7);
         User {
             name,
+            hash,
             skills,
             athletes,
+            tabs,
         }
     }
     pub fn rename(&mut self, rename: &str) {
         self.name = rename.to_string();
-    }
-    pub fn hash(&self) -> Hash {
-        let mut hasher = Sha1::new();
-        hasher.input_str(&self.name);
-        let mut hash = hasher.result_str();
-        hash.truncate(11);
-        hash
     }
     pub fn is_athlete(&self) -> bool {
         !self.skills.is_empty()
@@ -40,7 +39,7 @@ impl User {
     pub fn insert(&mut self, skill: &str, level: usize) {
         self.skills.insert(skill.into(), level);
     }
-    pub fn push(&mut self, athlete: Self) {
-        self.athletes.push(athlete.hash())
+    pub fn push(&mut self, athlete: Hash) {
+        self.athletes.push(athlete)
     }
 }

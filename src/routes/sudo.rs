@@ -32,7 +32,7 @@ fn create_gym(
     let pw = auth.pw.clone();
     let globalpw = auth.globalpw.clone();
     if bcrypt::verify(&globalpw, H) {
-        db.create_gym(name.clone(), email, pw, "./templates/src".to_string())
+        db.create_gym(&name, &email, &pw, "./templates/src")
             .unwrap();
         Ok(status::Accepted(Some(format!(
             "Successfully created gym {}",

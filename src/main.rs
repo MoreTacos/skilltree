@@ -40,6 +40,7 @@ fn ignite() -> rocket::Rocket {
         .mount("/", routes::index())
         .mount("/", routes::sudo())
         .mount("/", routes::admin())
+        .mount("/", routes::user())
         .register(catchers![not_found])
 }
 

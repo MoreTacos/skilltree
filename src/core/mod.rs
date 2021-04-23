@@ -22,44 +22,46 @@ pub struct Database {
 pub trait DatabaseExt {
     fn create_gym(
         &mut self,
-        name: String,
-        email: String,
-        pw: String,
-        tabs_path: String,
+        name: &str,
+        email: &str,
+        pw: &str,
+        tabs_path: &str,
     ) -> Result<(), Box<dyn Error>>;
-    fn get_gym_email(&self, email: String) -> Result<Option<Gym>, Box<dyn Error>>;
+    fn get_gym_email(&self, email: &str) -> Result<Option<Gym>, Box<dyn Error>>;
     fn get_gyms(&self) -> Vec<Gym>;
-    fn verify_gym(&self, email: String, pw: String) -> bool;
-    fn add_user(&self, email: String, user: User) -> Result<(), Box<dyn Error>>;
-    fn remove_user(&self, email: String, username: String) -> Result<(), Box<dyn Error>>;
+    fn verify_gym(&self, email: &str, pw: &str) -> bool;
+    fn add_user(&self, email: &str, user: User) -> Result<(), Box<dyn Error>>;
+    fn get_user(&self, url: &str, userhash: &str) -> User;
+    fn remove_user(&self, email: &str, username: &str) -> Result<(), Box<dyn Error>>;
+    fn get_tab(&self, gymurl: &str, taburl: &str) -> Tab;
 }
 
 impl DatabaseExt for State<'_, Database> {
     fn create_gym(
         &mut self,
-        name: String,
-        email: String,
-        pw: String,
-        tabs_path: String,
+        name: &str,
+        email: &str,
+        pw: &str,
+        tabs_path: &str,
     ) -> Result<(), Box<dyn Error>> {
         let gym = Gym::new(name, email, pw, tabs_path);
         self.gyms.insert(gym.email.clone().as_bytes(), gym)?;
         Ok(())
     }
-    fn get_gym_email(&self, email: String) -> Result<Option<Gym>, Box<dyn Error>> {
+    fn get_gym_email(&self, email: &str) -> Result<Option<Gym>, Box<dyn Error>> {
         Ok(self.gyms.get(email.as_bytes())?)
     }
     fn get_gyms(&self) -> Vec<Gym> {
         self.gyms.iter().map(|x| x.unwrap().1).collect()
     }
-    fn verify_gym(&self, email: String, pw: String) -> bool {
+    fn verify_gym(&self, email: &str, pw: &str) -> bool {
         let hash = match self.gyms.get(email.as_bytes()).unwrap() {
             Some(x) => x.pwhash,
             None => "".to_string(),
         };
         bcrypt::verify(&pw, &hash)
     }
-    fn add_user(&self, email: String, user: User) -> Result<(), Box<dyn Error>> {
+    fn add_user(&self, email: &str, user: User) -> Result<(), Box<dyn Error>> {
         let mut gym = self.gyms.get(email.as_bytes())?.unwrap();
 
         let mut users = self.gyms.get(email.as_bytes())?.unwrap().users;
@@ -70,16 +72,27 @@ impl DatabaseExt for State<'_, Database> {
         self.gyms.insert(email.as_bytes(), gym)?;
         Ok(())
     }
-    fn remove_user(&self, email: String, username: String) -> Result<(), Box<dyn Error>> {
+    fn get_user(&self, url: &str, userhash: &str) -> User {
+        self.get_gyms().iter().find(|&g| g.url == url).unwrap().users.iter().find(|&u| u.hash == userhash).unwrap().clone()
+    }
+    fn remove_user(&self, email: &str, hash: &str) -> Result<(), Box<dyn Error>> {
         let mut gym = self.gyms.get(email.as_bytes())?.unwrap();
-        gym.users = gym
-            .users
-            .into_iter()
-            .filter(|x| x.name != username)
-            .collect::<Vec<_>>();
-        dbg!(&gym);
+
+        let mut users = self.gyms.get(email.as_bytes())?.unwrap().users;
+        users.retain(|x| {
+            println!("{} {}", x.hash.clone(), hash.clone());
+            x.hash.clone() != hash.clone()
+        });
+
+        gym.users = users;
+
         self.gyms.insert(email.as_bytes(), gym)?;
         Ok(())
+    }
+    fn get_tab(&self, gymurl: &str, taburl: &str) -> Tab {
+        let tabs = self.get_gyms().iter().find(|&g| g.url == gymurl).unwrap().clone();
+        println!("{:?}", &tabs);
+        tabs.tabs.iter().inspect(|x| println!("{:?}", x)).find(|&t| t.url == taburl).unwrap().clone()
     }
 }
 
@@ -89,13 +102,13 @@ impl<'a, 'r> FromRequest<'a, 'r> for Gym {
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
         request.cookies()
             .get_private("email")
-            .and_then(|cookie| cookie.value().parse().ok())
+            .and_then(|cookie| cookie.value().parse::<String>().ok())
             .map(|email| {
                 let db = match request.guard::<State<Database>>() {
                     Success(db) => Some(db),
                     _ => None,
                 };
-                db.unwrap().get_gym_email(email).unwrap().unwrap()
+                db.unwrap().get_gym_email(&email).unwrap().unwrap()
             })
             .or_forward(())
     }

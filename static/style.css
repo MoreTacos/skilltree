@@ -40,7 +40,6 @@ header ul li {
 
 .container {
     display: flex;
-    margin-top: 3em;
 }
 
 .left {
@@ -194,10 +193,45 @@ th {
     text-align: left;
 }
 
+i {
+    cursor: pointer;
+}
+
 svg {
     background-color: #2F303A !important;
 }
 
-svg a {
-    color: black;
+#tree {
+    border: 1px dashed black;
+    flex-grow: 1;
+    height: 80vh;
+    width: auto;
+}
+
+.usermeta {
+    height: 100%;
+    width: 100%;
+}
+
+svg {
+    height: 100%;
+    width: 100%;
+}
+
+.user-container {
+    display: flex;
+    flex-flow: column;
+}
+
+.tab-head {
+    display: flex;
+}
+
+.tab-head ul {
+    display: flex;
+    list-style: none;
+}
+
+.tab-head ul li {
+    padding: 1em;
 }

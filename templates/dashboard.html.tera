@@ -45,8 +45,21 @@
             <th>Athletes?</th>
             <th>Tabs</th>
         </tr>
+        {% for user in users %}
+        <tr>
+            <td id="{{user.hash}}">{{ user.name }}
+                <a href="#"><i class="fa fa-paste"></i></a>
+                <a href="#"><i class="fa fa-times"></i></a>
+            </td>
+            <td>Empty</td>
+            <td>Empty</td>
+        </tr>
+        {% endfor %}
     </table>
 </div>
+<script>
+    const gym = "{{ gymurl }}";
+</script>
 <script src="./static/dashboard.js"></script>
 </div>
 {% endblock %}

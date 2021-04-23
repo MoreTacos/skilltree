@@ -18,7 +18,7 @@ pub struct Gym {
 }
 
 impl Gym {
-    pub fn new(name: String, email: String, pw: String, tabs_path: String) -> Self {
+    pub fn new(name: &str, email: &str, pw: &str, tabs_path: &str) -> Self {
         let users: Vec<User> = vec![];
         let pwhash = bcrypt::hash(pw).unwrap();
         let url = name
@@ -31,8 +31,8 @@ impl Gym {
             .to_lowercase();
         let tabs = Tab::source_path(&tabs_path);
         Gym {
-            name,
-            email,
+            name: name.to_string(),
+            email: email.to_string(),
             pwhash,
             url,
             users,
@@ -52,6 +52,7 @@ impl std::fmt::Debug for Tab {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Tab")
             .field("name", &self.name)
+            .field("url", &self.url)
             .field("svg", &self.svg.clone().truncate(100))
             .finish()
     }

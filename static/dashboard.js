@@ -26,15 +26,33 @@ function addUserButton() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data),
-    }).then(response => response.json()).then(_data => {
+    }).then(response => response.json()).then(id => {
         let table = document.getElementById('table');
         let row = table.insertRow(1);
         let who = row.insertCell(0);
         who.innerHTML = name;
+
+        who.setAttribute("id", id);
+
+        let a1 = document.createElement('a');
+        a1.setAttribute("href", "#");
         let copy = document.createElement('i');
+        a1.addEventListener("click", copyUserButton);
         copy.classList.add("fa");
         copy.classList.add("fa-paste");
-        who.appendChild(copy);
+
+        let a2 = document.createElement('a');
+        a2.setAttribute("href", "#");
+        let x = document.createElement('i');
+        a2.addEventListener("click", removeUserButton);
+        x.classList.add("fa");
+        x.classList.add("fa-times");
+
+        a1.appendChild(copy);
+        a2.appendChild(x)
+        who.appendChild(a1);
+        who.appendChild(a2);
+
         let athletes = row.insertCell(1);
         athletes.innerHTML = "Empty";
         let tabs_row = row.insertCell(2);
@@ -52,29 +70,41 @@ function closeUserButton() {
 }
 document.getElementById('close-user-button').addEventListener("click", closeUserButton);
 
-function removeUser() {
-    let name = this.previousElementSibling.innerText;
-    fetch(`/admin/remove-user/${name}`, { method: 'DELETE' });
-    this.parentNode.remove();
+// Remove User Button
+function removeUserButton() {
+    let hash = this.parentNode.id;
+    fetch(`/remove-user`, { 
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            hash: hash,
+        }),
+    });
+    this.parentNode.parentNode.remove();
 }
+Array.from(document.getElementsByClassName("fa-times")).forEach(function(e) {
+    e.parentNode.addEventListener("click", removeUserButton);
+})
 
-function addUser() {
-    let name = document.getElementById('name-input').value;
-    fetch(`/admin/add-user/${name}`, { method: 'POST' });
-    
-    let li = document.createElement('li');
-    let p = document.createElement('p');
-    let button = document.createElement('button');
-    p.innerHTML=name;
-    button.addEventListener('click', removeUser);
-    button.innerHTML = "Remove";
-    li.appendChild(p);
-    li.appendChild(button);
-    let ul = document.getElementById('user-list');
-    ul.appendChild(li);
+// Copy User Button
+function copyUserButton() {
+    let id = this.parentNode.id;
+    let baseurl = window.location.origin;
 
-    document.getElementById('name-input').value = '';
+    let userlink = `${baseurl}/user?g=${gym}&u=${id}`;
+
+    let el = document.createElement("textarea");
+    el.value = userlink;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand("copy");
+    document.body.removeChild(el);
 }
+Array.from(document.getElementsByClassName("fa-paste")).forEach(function(e) {
+    e.parentNode.addEventListener("click", copyUserButton);
+})
 
 /*
 let elements = document.getElementsByClassName("remove-user");
