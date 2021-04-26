@@ -1,3 +1,9 @@
+let skills = document.getElementsByClassName("skill");
+Array.from(skills).forEach(function(rect) {
+    rect.setAttributeNS(null, "rx", "5");
+    rect.setAttributeNS(null, "ry", "5");
+});
+
 const hasPositionChanged = ({ pos, prevPos }) => pos !== prevPos;
 
 const valueInRange = ({ minScale, maxScale, scale }) => scale <= maxScale && scale >= minScale;
@@ -73,7 +79,7 @@ let mousedown = false;
     container.addEventListener("wheel", (event) => {
         event.preventDefault();
         instance.zoom({
-            deltaScale: Math.sign(event.deltaY) > 0 ? -1 : 1,
+            deltaScale: Math.sign(event.deltaY) > 0 ? -5 : 5,
             x: event.pageX,
             y: event.pageY
         });

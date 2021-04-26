@@ -47,5 +47,7 @@ fn user_index(db: State<Database>, g: String, u: String, s: String) -> rocket::r
     let tabs: Vec<_> = db.get_user_tabs(&g, &u).into_iter().map(|x| DisplayTab{ name: x.name, url: x.url }).collect();
     context.insert("tabs", &tabs);
 
+    context.insert("skills", &user.skills.clone());
+
     rocket::response::content::Html(tera.render(&s, &context).unwrap())
 }

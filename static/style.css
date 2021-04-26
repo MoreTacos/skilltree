@@ -84,8 +84,6 @@ label {
 }
 
 input {
-    margin: 1em 0;
-    padding: 0.4em 0;
     border-color: #1762A7;
     background-color: #000533;
 }
@@ -202,6 +200,46 @@ i {
 
 svg {
     background-color: #2F303A !important;
+}
+
+svg div {
+    color: white !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.8em !important;
+    display: flex !important;
+    flex-direction: column;
+}
+
+svg p {
+    padding: 1.2em;
+    margin-top: -1em;
+}
+
+input[type="range"] {
+    -webkit-appearance: none !important;
+    width: 80%;
+    height: 2px;
+    background-color: grey;
+    border: 1px solid grey;
+    border-radius: 5px;
+    margin: auto;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+}
+
+path {
+    stroke: white;
+    fill: none;
+}
+
+rect {
+    stroke: none;
 }
 
 #tree {
