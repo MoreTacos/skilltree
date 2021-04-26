@@ -2,40 +2,23 @@
 <html lang="en">
     <head>
         <meta charset="utf-8"></meta>
-        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"></meta>
         <title>SkillTree — Plan Your Progress</title>
         <link rel="stylesheet" href="/static/style.css"></link>
         <link href="http://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" type="text/css"></link>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
-    <body>
-      <header class="main-header">
-        <div class="logo">
-          <a href="/">
-            <img src="./static/img/logo.svg" alt="Logo" />
-            <p>SkillTree</p>
-          </a>
-        </div>
+    <body class="tree-container">
+        <nav>
         <ul>
-        {% if iscoach %}
-          <li><p><a href="/">My Athletes</a></p></li>
-        {% endif %}
-        {% if isathlete %}
-          <li><p><a href="/">My Skills</a></p></li>
-        {% endif %}
-        {% if isadmin %}
-          <li><p><a href="/dashboard">Dashboard</a></p></li>
-          <li><p><a href="/logout">Logout</a></p></li>
-        {% else %}
-          <li><p><a href="/discover">Discover</a></p></li>
-          <li><p><a href="/join">Join</a></p></li>
-        {% endif %}
+          {% for tab in tabs %}
+            <li><h4><a href="/user?g={{ gymurl }}&u={{ userhash }}&s={{ tab.url }}">{{ tab.name }}</a></h4></li>
+          {% endfor %}
         </ul>
-      </header>
+        </nav>
         <main>
-            <div class="container">
-                <div id="tree">{% block tree %}{{ super() }}{% endblock %}</div>
-            </div>
+            <div id="tree">{% block tree %}{{ super() }}{% endblock %}</div>
         </main>
     </body>
+    <script src="./static/user.js"></script>
 </html>

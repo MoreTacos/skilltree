@@ -84,7 +84,7 @@ impl Tab {
 
         let mut svg = r###"{% extends "user" %}
 {% block tree %}
-<div id="usermeta" value="{{ userhash }}">"###
+"###
             .to_string()
             + sliced.next().unwrap();
 
@@ -129,7 +129,7 @@ impl Tab {
         }
 
         svg = svg
-            + r###"</div>
+            + r###"
 {% endblock %}"###;
 
         let url = name
@@ -141,6 +141,8 @@ impl Tab {
             .collect::<String>()
             .to_lowercase()
             .replace("skilltree", "");
+
+        let name = name.to_uppercase();
 
         Tab { name, url, svg }
     }

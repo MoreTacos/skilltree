@@ -7,10 +7,13 @@
     color: white;
 }
 
-body {
+.body {
     max-width: 1150px;
-    background: #2F303A;
     margin: auto;
+}
+
+body {
+    background: #2F303A;
 }
 
 header {
@@ -202,20 +205,43 @@ svg {
 }
 
 #tree {
-    border: 1px dashed black;
-    flex-grow: 1;
-    height: 80vh;
-    width: auto;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    padding: 2em;
 }
 
-.usermeta {
-    height: 100%;
-    width: 100%;
+body {
+    overflow: hidden;
 }
 
 svg {
     height: 100%;
     width: 100%;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #000533;
+    border-radius: 1em;
+    margin: 1em;
+    opacity: 50%;
+    z-index: 8;
+}
+
+nav:hover {
+    opacity: 100%;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    padding: 1em;
 }
 
 .user-container {

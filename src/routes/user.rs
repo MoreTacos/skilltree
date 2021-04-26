@@ -21,7 +21,7 @@ pub fn user() -> Vec<Route> {
 
 #[get("/user?<g>&<u>", rank = 2)]
 fn user_forward(g: String, u: String) -> Redirect {
-    Redirect::to(format!("/user?g={}&u={}&s={}", g, u, "fxtree"))
+    Redirect::to(format!("/user?g={}&u={}&s={}", g, u, "fx"))
 }
 
 #[get("/user?<g>&<u>&<s>")]
@@ -36,13 +36,15 @@ fn user_index(db: State<Database>, g: String, u: String, s: String) -> rocket::r
 
     let mut context = Context::new();
     context.insert("username", &user.name);
-    context.insert("userhash", &user.hash);
-    #[derive(Serialize)]
-    struct MyTab {
+    context.insert("userhash", &u);
+    context.insert("gymurl", &g);
+    println!("{}", &g);
+    #[derive(Serialize, Debug)]
+    struct DisplayTab {
         name: String,
         url: String,
     }
-    let tabs: Vec<MyTab> = user.tabs.clone().into_iter().map(|x| MyTab{ name: x.clone(), url: x.clone() }).collect();
+    let tabs: Vec<_> = db.get_user_tabs(&g, &u).into_iter().map(|x| DisplayTab{ name: x.name, url: x.url }).collect();
     context.insert("tabs", &tabs);
 
     rocket::response::content::Html(tera.render(&s, &context).unwrap())
