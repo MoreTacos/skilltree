@@ -20,8 +20,9 @@ pub fn user() -> Vec<Route> {
 }
 
 #[get("/user?<g>&<u>", rank = 2)]
-fn user_forward(g: String, u: String) -> Redirect {
-    Redirect::to(format!("/user?g={}&u={}&s={}", g, u, "fx"))
+fn user_forward(db: State<Database>, g: String, u: String) -> Redirect {
+    let tabdefault = db.get_user_tab_default(&g, &u);
+    Redirect::to(format!("/user?g={}&u={}&s={}", g, u, &tabdefault.url))
 }
 
 #[get("/user?<g>&<u>&<s>")]
@@ -32,41 +33,25 @@ fn user_index(
     s: String,
 ) -> rocket::response::content::Html<String> {
     let user = db.get_user(&g, &u);
-    todo!()
-    /*
-    let tab = db.get_tab(&g, &s);
+    let tab = db.get_user_tab(&g, &u, &s);
 
     let mut tera = Tera::default();
     tera.add_template_file("./templates/layout.html.tera", Some("layout"))
         .unwrap();
     tera.add_template_file("./templates/user.html.tera", Some("user"))
         .unwrap();
-    tera.add_raw_template(&s, &tab.svg).unwrap();
+    tera.add_template_file(tab.path, Some(&s)).unwrap();
 
     let mut context = Context::new();
     context.insert("username", &user.name);
     context.insert("userhash", &u);
     context.insert("gymurl", &g);
-    println!("{}", &g);
-    #[derive(Serialize, Debug)]
-    struct DisplayTab {
-        name: String,
-        url: String,
-    }
-    let tabs: Vec<_> = db
-        .get_user_tabs(&g, &u)
-        .into_iter()
-        .map(|x| DisplayTab {
-            name: x.name,
-            url: x.url,
-        })
-        .collect();
+    let tabs: Vec<_> = db.get_user_tabs(&g, &u);
     context.insert("tabs", &tabs);
 
     context.insert("skills", &user.skills.clone());
 
     rocket::response::content::Html(tera.render(&s, &context).unwrap())
-    */
 }
 
 #[put("/update_skill?<g>&<u>&<s>&<v>")]

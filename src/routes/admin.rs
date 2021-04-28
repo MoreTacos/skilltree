@@ -59,16 +59,16 @@ fn dashboard(db: State<Database>, gym: Gym) -> Template {
 struct AddUser {
     name: String,
     iscoach: bool,
-    tabs: String,
+    tabs_package_url: String,
 }
 
 #[post("/add-user", data = "<user>")]
 fn add_user(db: State<Database>, gym: Gym, user: Json<AddUser>) -> Json<String> {
-    let name: String = user.name.clone();
     let skills: HashMap<String, usize> = HashMap::new();
     let athletes: Vec<String> = vec![];
-    let user: User = User::new(name, skills, athletes, user.tabs.clone());
-    db.add_user(&gym.email, user.clone()).unwrap();
+    let user = db
+        .add_user(&gym.email, &user.name, &user.tabs_package_url)
+        .unwrap();
     Json(user.hash)
 }
 

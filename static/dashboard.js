@@ -18,7 +18,7 @@ function addUserButton() {
     let data = {
         name: name,
         iscoach: iscoach,
-        tabs: tabs,
+        tabs_package_url: tabs,
     };
     fetch('/add-user', {
         method: 'POST',

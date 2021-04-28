@@ -1,5 +1,5 @@
-use std::fs;
 use std::error::Error;
+use std::fs;
 
 pub fn parsetab(name: &str, package: &str, svg: &str) -> Result<(), Box<dyn Error>> {
     let mut svg = svg.to_string();
@@ -95,7 +95,6 @@ pub fn parsetab(name: &str, package: &str, svg: &str) -> Result<(), Box<dyn Erro
     svg = svg
         + r###"
 {% endblock %}"###;
-
 
     fs::create_dir_all(format!("./templates/src/{}", package)).unwrap();
     fs::write(format!("./templates/src/{}/{}", package, name), svg)?;

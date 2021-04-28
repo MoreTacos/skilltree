@@ -1,19 +1,41 @@
 use super::user::User;
-use std::fs;
 use pwhash::bcrypt;
 use serde::Deserialize;
 use serde::Serialize;
+use std::fs;
 
 #[derive(Deserialize, Serialize, Clone, Debug, Default)]
 pub struct Tab {
-    name: String,
-    path: String,
+    pub name: String,
+    pub url: String,
+    pub path: String,
+}
+
+impl Tab {
+    fn new(name: &str, path: &str) -> Self {
+        let name = name.to_string();
+        let url = name.chars().filter(|c| c.is_alphanumeric()).collect();
+        let path = path.to_string();
+        Tab { name, url, path }
+    }
+    fn content(&self) -> String {
+        fs::read_to_string(self.path.clone()).unwrap()
+    }
 }
 
 #[derive(Deserialize, Serialize, Clone, Debug, Default)]
 pub struct Package {
-    name: String,
-    tabs: Vec<Tab>
+    pub name: String,
+    pub url: String,
+    pub tabs: Vec<Tab>,
+}
+
+impl Package {
+    fn new(name: &str, tabs: Vec<Tab>) -> Self {
+        let name = name.to_string();
+        let url = name.chars().filter(|c| c.is_alphanumeric()).collect();
+        Package { name, url, tabs }
+    }
 }
 
 // make sure that when removing users, they are not athletes of
@@ -42,23 +64,29 @@ impl Gym {
             .filter(|c| "ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(c.clone()))
             .collect::<String>()
             .to_lowercase();
-        let packages = fs::read_dir("./templates/src").unwrap().map(|dir| {
-            let dir = dir.unwrap().path();
-            let name = dir.file_stem().unwrap().to_str().unwrap().to_string();
-            let tabs = fs::read_dir(dir).unwrap().map(|tab| {
-                let tab = tab.unwrap();
-                let name = tab.path().file_stem().unwrap().to_str().unwrap().to_string();
-                let path = tab.path().to_str().unwrap().to_string();
-                Tab {
-                    name,
-                    path,
-                }
-            }).collect();
-            Package { 
-                name, 
-                tabs 
-            }
-        }).collect();
+        let packages = fs::read_dir("./templates/src")
+            .unwrap()
+            .map(|dir| {
+                let dir = dir.unwrap().path();
+                let name = dir.file_stem().unwrap().to_str().unwrap().to_string();
+                let tabs = fs::read_dir(dir)
+                    .unwrap()
+                    .map(|tab| {
+                        let tab = tab.unwrap();
+                        let name = tab
+                            .path()
+                            .file_stem()
+                            .unwrap()
+                            .to_str()
+                            .unwrap()
+                            .to_string();
+                        let path = tab.path().to_str().unwrap().to_string();
+                        Tab::new(&name, &path)
+                    })
+                    .collect();
+                Package::new(&name, tabs)
+            })
+            .collect();
         Gym {
             name,
             email,

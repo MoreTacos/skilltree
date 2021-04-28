@@ -1,18 +1,18 @@
-use crate::core::Database;
 use crate::core::parsetab;
+use crate::core::Database;
 use crate::core::DatabaseExt;
 use crate::core::Gym;
 use pwhash::bcrypt;
-use std::error::Error;
+use rocket::data::Data;
 use rocket::request::Form;
 use rocket::response::status;
 use rocket::Route;
 use rocket::State;
+use rocket_contrib::json::Json;
 use serde::Deserialize;
 use serde::Serialize;
-use rocket::data::Data;
-use rocket_contrib::json::Json;
 use std::collections::HashMap;
+use std::error::Error;
 
 pub fn sudo() -> Vec<Route> {
     routes![create_gym, create_package]
@@ -38,8 +38,7 @@ fn create_gym(
     let pw = auth.pw.clone();
     let globalpw = auth.globalpw.clone();
     if bcrypt::verify(&globalpw, H) {
-        db.create_gym(&name, &email, &pw)
-            .unwrap();
+        db.create_gym(&name, &email, &pw).unwrap();
         Ok(status::Accepted(Some(format!(
             "Successfully created gym {}",
             &name
@@ -57,10 +56,12 @@ struct Package {
     name: String,
     globalpw: String,
     files: HashMap<String, String>,
-} 
+}
 
 #[post("/create_package", format = "json", data = "<package>")]
-fn create_package(package: Json<Package>) -> Result<status::Accepted<String>, status::Unauthorized<String>> {
+fn create_package(
+    package: Json<Package>,
+) -> Result<status::Accepted<String>, status::Unauthorized<String>> {
     let name = package.name.clone();
     let globalpw = package.globalpw.clone();
     let tabs = package.files.clone();

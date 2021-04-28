@@ -12,7 +12,7 @@ pub struct User {
     pub hash: Hash,
     pub skills: HashMap<String, usize>,
     pub athletes: Vec<Hash>,
-    pub tabs_package_path: String,
+    pub tabs_package_url: String,
 }
 
 impl User {
@@ -20,7 +20,7 @@ impl User {
         name: String,
         skills: HashMap<String, usize>,
         athletes: Vec<Hash>,
-        tabs_package_path: String,
+        tabs_package_url: String,
     ) -> Self {
         let mut hash: String = bcrypt::hash(&name)
             .unwrap()
@@ -34,7 +34,7 @@ impl User {
             hash,
             skills,
             athletes,
-            tabs_package_path,
+            tabs_package_url,
         }
     }
     pub fn rename(&mut self, rename: &str) {
