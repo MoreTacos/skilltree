@@ -26,11 +26,9 @@
             <input id="iscoach" type="checkbox">
             <label for="tabs" class="block">Tabs</label>
             <select id="tabs" name="tabs">
-                <option value="rec">Recreational</option>
-                <option value="adv-rec-boys">Boys Advanced Recreational</option>
-                <option value="adv-rec-girls">Girls Advanced Recreational</option>
-                <option value="mens-comp">Men's Competitive</option>
-                <option value="womans-comp">Woman's Competitive</option>
+            {% for package in packages %}
+                <option value="{{ package.name }}">{{ package.name }}</option>
+            {% endfor %}
             </select>
             <button id="add-user-button">Add User</button>
             <button id="close-user-button">Cancel</button>

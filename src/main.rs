@@ -8,7 +8,6 @@ mod core;
 mod routes;
 
 use crate::core::Database;
-use crate::core::Tab;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::tera::Context;
 use rocket_contrib::templates::Template;
@@ -26,15 +25,12 @@ fn ignite() -> rocket::Rocket {
         .open()
         .expect("Failed to open sled DB");
 
-    let tabs = Tab::source_path("./templates/src");
-
     rocket::ignite()
         .attach(Template::fairing())
         .manage(Database {
             gyms: db
                 .open_bincode_tree("gyms")
                 .expect("failed to open gym tree"),
-            demo: tabs,
         })
         .mount("/static", StaticFiles::from("static"))
         .mount("/", routes::index())

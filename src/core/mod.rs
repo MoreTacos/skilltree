@@ -1,22 +1,22 @@
 mod gym;
+mod tab;
 mod user;
 
 pub use gym::Gym;
-pub use gym::Tab;
 pub use user::User;
+pub use tab::parsetab;
 
 use pwhash::bcrypt;
+use rocket::outcome::IntoOutcome;
+use rocket::request::{self, FromRequest, Request};
+use rocket::Outcome::Forward;
+use rocket::Outcome::Success;
 use rocket::State;
 use sled_extensions::bincode::Tree;
 use std::error::Error;
-use rocket::outcome::IntoOutcome;
-use rocket::request::{self, Request, FromRequest};
-use rocket::Outcome::Success;
-use rocket::Outcome::Forward;
 
 pub struct Database {
     pub gyms: Tree<Gym>,
-    pub demo: Vec<Tab>,
 }
 
 pub trait DatabaseExt {
@@ -25,7 +25,6 @@ pub trait DatabaseExt {
         name: &str,
         email: &str,
         pw: &str,
-        tabs_path: &str,
     ) -> Result<(), Box<dyn Error>>;
     fn get_gym_email(&self, email: &str) -> Result<Option<Gym>, Box<dyn Error>>;
     fn get_gyms(&self) -> Vec<Gym>;
@@ -33,8 +32,9 @@ pub trait DatabaseExt {
     fn add_user(&self, email: &str, user: User) -> Result<(), Box<dyn Error>>;
     fn get_user(&self, gymurl: &str, userurl: &str) -> User;
     fn remove_user(&self, email: &str, username: &str) -> Result<(), Box<dyn Error>>;
-    fn get_tab(&self, gymurl: &str, taburl: &str) -> Tab;
-    fn get_user_tabs(&self, gymurl: &str, userurl: &str) -> Vec<Tab>;
+    //fn get_tab(&self, gymurl: &str, taburl: &str) -> Tab;
+    //fn get_user_tabs(&self, gymurl: &str, userurl: &str) -> Vec<Tab>;
+    //fn update_user_skill(&self, gymurl: &str, userurl: &str, skill: &str, value: usize) -> Result<(), Box<dyn Error>>;
 }
 
 impl DatabaseExt for State<'_, Database> {
@@ -43,9 +43,8 @@ impl DatabaseExt for State<'_, Database> {
         name: &str,
         email: &str,
         pw: &str,
-        tabs_path: &str,
     ) -> Result<(), Box<dyn Error>> {
-        let gym = Gym::new(name, email, pw, tabs_path);
+        let gym = Gym::new(name, email, pw);
         self.gyms.insert(gym.email.clone().as_bytes(), gym)?;
         Ok(())
     }
@@ -63,49 +62,70 @@ impl DatabaseExt for State<'_, Database> {
         bcrypt::verify(&pw, &hash)
     }
     fn add_user(&self, email: &str, user: User) -> Result<(), Box<dyn Error>> {
-        let mut gym = self.gyms.get(email.as_bytes())?.unwrap();
+        let mut gym = self.gyms.remove(email.as_bytes())?.unwrap();
 
-        let mut users = self.gyms.get(email.as_bytes())?.unwrap().users;
+        let mut users = gym.users.clone();
         users.push(user);
 
         gym.users = users;
 
         self.gyms.insert(email.as_bytes(), gym)?;
+
         Ok(())
     }
     fn get_user(&self, gymurl: &str, userurl: &str) -> User {
-        self.get_gyms().iter().find(|&g| g.url == gymurl).unwrap().users.iter().find(|&u| u.hash == userurl).unwrap().clone()
+        self.get_gyms()
+            .iter()
+            .find(|&g| g.url == gymurl)
+            .unwrap()
+            .users
+            .iter()
+            .find(|&u| u.hash == userurl)
+            .unwrap()
+            .clone()
     }
     fn remove_user(&self, email: &str, hash: &str) -> Result<(), Box<dyn Error>> {
-        let mut gym = self.gyms.get(email.as_bytes())?.unwrap();
+        let mut gym = self.gyms.remove(email.as_bytes())?.unwrap();
 
-        let mut users = self.gyms.get(email.as_bytes())?.unwrap().users;
-        users.retain(|x| {
-            x.hash.clone() != hash.clone()
-        });
+        let mut users = gym.users.clone();
+        users.retain(|x| x.hash.clone() != hash.clone());
 
         gym.users = users;
 
         self.gyms.insert(email.as_bytes(), gym)?;
         Ok(())
     }
+    /*
     fn get_tab(&self, gymurl: &str, taburl: &str) -> Tab {
-        let tabs = self.get_gyms().iter().find(|&g| g.url == gymurl).unwrap().clone();
+        let tabs = self
+            .get_gyms()
+            .iter()
+            .find(|&g| g.url == gymurl)
+            .unwrap()
+            .clone();
         tabs.tabs.iter().find(|&t| t.url == taburl).unwrap().clone()
     }
     fn get_user_tabs(&self, gymurl: &str, userurl: &str) -> Vec<Tab> {
-        let tabs = self.get_gyms().iter().find(|&g| g.url == gymurl).unwrap().tabs.clone();
+        let tabs = self
+            .get_gyms()
+            .iter()
+            .find(|&g| g.url == gymurl)
+            .unwrap()
+            .tabs
+            .clone();
         let user = self.get_user(gymurl, userurl);
         tabs.clone().retain(|x| user.tabs.contains(&x.url));
         tabs
     }
+    */
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for Gym {
     type Error = ();
 
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
-        request.cookies()
+        request
+            .cookies()
             .get_private("email")
             .and_then(|cookie| cookie.value().parse::<String>().ok())
             .map(|email| {
