@@ -10,7 +10,6 @@ edition = "2018"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1"
 sled = "0.34"
-sled-extensions = { version = "0.2.0", features = ["bincode"] }
 toml = "0.5"
 pwhash = "1"
 rust-crypto = "^0.2"

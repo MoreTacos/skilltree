@@ -14,7 +14,9 @@ function addUserButton() {
     } else {
         iscoach = false;
     }
-    let tabs = document.getElementById('tabs').value;
+    let tabs_select = document.getElementById('tabs');
+    let tabs = tabs_select.value;
+    let tab_text = tabs_select.options[tabs_select.selectedIndex].text;
     let data = {
         name: name,
         iscoach: iscoach,
@@ -30,7 +32,7 @@ function addUserButton() {
         let table = document.getElementById('table');
         let row = table.insertRow(1);
         let who = row.insertCell(0);
-        who.innerHTML = name;
+        who.classList.add("who-row");
 
         who.setAttribute("id", id);
 
@@ -50,13 +52,24 @@ function addUserButton() {
 
         a1.appendChild(copy);
         a2.appendChild(x)
-        who.appendChild(a1);
-        who.appendChild(a2);
+
+        let linkbox = document.createElement('div');
+        linkbox.classList.add("linkbox");
+        linkbox.appendChild(a1);
+        linkbox.appendChild(a2);
+
+        who.appendChild(linkbox);
+
+        let p = document.createElement('p');
+        p.innerHTML = name;
+        who.appendChild(p);
 
         let athletes = row.insertCell(1);
+        athletes.classList.add("athlete-row");
         athletes.innerHTML = "Empty";
         let tabs_row = row.insertCell(2);
-        tabs_row.innerHTML = tabs;
+        tabs_row.classList.add("package-row");
+        tabs_row.innerHTML = tab_text;
         document.getElementById('name').value = "";
     }).catch(err => {
         console.log(err);
@@ -72,7 +85,8 @@ document.getElementById('close-user-button').addEventListener("click", closeUser
 
 // Remove User Button
 function removeUserButton() {
-    let hash = this.parentNode.id;
+    let hash = this.parentNode.parentNode.id;
+    console.log(hash);
     fetch(`/remove-user`, { 
         method: 'DELETE',
         headers: {
@@ -82,7 +96,7 @@ function removeUserButton() {
             hash: hash,
         }),
     });
-    this.parentNode.parentNode.remove();
+    this.parentNode.parentNode.parentNode.remove();
 }
 Array.from(document.getElementsByClassName("fa-times")).forEach(function(e) {
     e.parentNode.addEventListener("click", removeUserButton);
@@ -90,7 +104,7 @@ Array.from(document.getElementsByClassName("fa-times")).forEach(function(e) {
 
 // Copy User Button
 function copyUserButton() {
-    let id = this.parentNode.id;
+    let id = this.parentNode.parentNode.id;
     let baseurl = window.location.origin;
 
     let userlink = `${baseurl}/user?g=${gym}&u=${id}`;

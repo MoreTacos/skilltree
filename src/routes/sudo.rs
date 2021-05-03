@@ -60,6 +60,7 @@ struct Package {
 
 #[post("/create_package", format = "json", data = "<package>")]
 fn create_package(
+    db: State<Database>,
     package: Json<Package>,
 ) -> Result<status::Accepted<String>, status::Unauthorized<String>> {
     let name = package.name.clone();
@@ -70,6 +71,7 @@ fn create_package(
         for tab in tabs {
             parsetab(&tab.0, &name, &tab.1).unwrap();
         }
+        db.reload_tabs().unwrap();
         Ok(status::Accepted(Some(format!(
             "Successfully created tab package {}",
             &name

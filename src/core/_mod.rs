@@ -3,8 +3,8 @@ mod tab;
 mod user;
 
 pub use gym::Gym;
-pub use tab::Package;
-pub use tab::Tab;
+pub use gym::Package;
+pub use gym::Tab;
 pub use tab::parsetab;
 pub use user::User;
 
@@ -13,14 +13,13 @@ use rocket::outcome::IntoOutcome;
 use rocket::request::{self, FromRequest, Request};
 use rocket::Outcome::Success;
 use rocket::State;
-use sled::Tree;
+use sled_extensions::bincode::Tree;
 use std::collections::HashMap;
 use std::error::Error;
 
 pub struct Database {
-    pub gyms: Tree,
-    pub users: Tree,
-    pub packages: Tree,
+    pub gyms: Tree<Gym>,
+    pub users: Tree<User>,
 }
 
 pub trait DatabaseExt {

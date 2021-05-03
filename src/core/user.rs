@@ -2,6 +2,8 @@ use pwhash::bcrypt;
 use serde::Deserialize;
 use serde::Serialize;
 use std::collections::HashMap;
+use crate::core::Tab;
+use crate::core::Package;
 
 type Hash = String; // the userhash
 type Url = String; // the tab's url
@@ -12,7 +14,7 @@ pub struct User {
     pub hash: Hash,
     pub skills: HashMap<String, usize>,
     pub athletes: Vec<Hash>,
-    pub tabs_package_url: String,
+    pub package: Package,
 }
 
 impl User {
@@ -20,7 +22,7 @@ impl User {
         name: String,
         skills: HashMap<String, usize>,
         athletes: Vec<Hash>,
-        tabs_package_url: String,
+        package: Package,
     ) -> Self {
         let mut hash: String = bcrypt::hash(&name)
             .unwrap()
@@ -34,7 +36,7 @@ impl User {
             hash,
             skills,
             athletes,
-            tabs_package_url,
+            package,
         }
     }
     pub fn rename(&mut self, rename: &str) {

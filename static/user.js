@@ -1,7 +1,24 @@
+let mousedown = false;
+let mouseoninput = false;
+
 let skills = document.getElementsByClassName("skill");
 Array.from(skills).forEach(function(rect) {
     rect.setAttributeNS(null, "rx", "5");
     rect.setAttributeNS(null, "ry", "5");
+
+    rect.addEventListener("mouseout", _ => {
+        mouseoninput = false;
+    });
+    rect.addEventListener("mouseover", _ => {
+        mouseoninput = true;
+    });
+
+    rect.nextSibling.addEventListener("mouseout", _ => {
+        mouseoninput = false;
+    });
+    rect.nextSibling.addEventListener("mouseover", _ => {
+        mouseoninput = true;
+    });
 });
 
 const hasPositionChanged = ({ pos, prevPos }) => pos !== prevPos;
@@ -72,14 +89,29 @@ const renderer = ({ minScale, maxScale, element, scaleSensitivity = 10 }) => {
     return Object.assign({}, canZoom(state), canPan(state));
 };
 
-let mousedown = false;
+
+let inputs = document.getElementsByTagName("input")
+Array.from(inputs).forEach(function(input) {
+    input.addEventListener("mouseout", _ => {
+        mouseoninput = false;
+    });
+    input.addEventListener("mouseover", _ => {
+        mouseoninput = true;
+    });
+    input.previousSibling.addEventListener("mouseout", _ => {
+        mouseoninput = false;
+    });
+    input.previousSibling.addEventListener("mouseover", _ => {
+        mouseoninput = true;
+    });
+});
 
     const container = document.getElementById("tree");
     const instance = renderer({ scaleSensitivity: 50, minScale: .1, maxScale: 30, element: container });
     container.addEventListener("wheel", (event) => {
         event.preventDefault();
         instance.zoom({
-            deltaScale: Math.sign(event.deltaY) > 0 ? -5 : 5,
+            deltaScale: Math.sign(event.deltaY) > 0 ? -1 : 1,
             x: event.pageX,
             y: event.pageY
         });
@@ -91,14 +123,17 @@ let mousedown = false;
             scale: 1,
         });
     });
-    container.addEventListener("mousedown", _ => {
+    document.addEventListener("mousedown", _ => {
         mousedown = true;
     });
-    container.addEventListener("mouseup", _ => {
+    document.addEventListener("mouseup", _ => {
         mousedown = false;
     });
     container.addEventListener("mousemove", (event) => {
         if (!mousedown) {
+            return;
+        }
+        if (mouseoninput) {
             return;
         }
         event.preventDefault();

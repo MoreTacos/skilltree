@@ -1,5 +1,6 @@
 use crate::core::Database;
 use crate::core::DatabaseExt;
+use crate::core::Package;
 use crate::core::Gym;
 use crate::core::User;
 use rocket::http::{Cookie, Cookies};
@@ -16,7 +17,7 @@ use serde::Serialize;
 use std::collections::HashMap;
 
 pub fn user() -> Vec<Route> {
-    routes![user_forward, user_index]
+    routes![user_forward, user_index, update_user_skill]
 }
 
 #[get("/user?<g>&<u>", rank = 2)]
@@ -46,15 +47,15 @@ fn user_index(
     context.insert("username", &user.name);
     context.insert("userhash", &u);
     context.insert("gymurl", &g);
-    let tabs: Vec<_> = db.get_user_tabs(&g, &u);
-    context.insert("tabs", &tabs);
+    let package = db.get_user_package(&g, &u);
+    context.insert("package", &package);
 
     context.insert("skills", &user.skills.clone());
 
     rocket::response::content::Html(tera.render(&s, &context).unwrap())
 }
 
-#[put("/update_skill?<g>&<u>&<s>&<v>")]
+#[put("/update?<g>&<u>&<s>&<v>")]
 fn update_user_skill(
     db: State<Database>,
     g: String,
@@ -62,6 +63,6 @@ fn update_user_skill(
     s: String,
     v: usize,
 ) -> rocket::response::status::Accepted<String> {
-    //    db.update_user_skill(&g, &u, &s, &v).unwrap();
+    db.update_user_skill(&g, &u, &s, v).unwrap();
     rocket::response::status::Accepted(Some("Success".to_string()))
 }

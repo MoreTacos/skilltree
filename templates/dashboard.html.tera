@@ -27,7 +27,7 @@
             <label for="tabs" class="block">Tabs</label>
             <select id="tabs" name="tabs">
             {% for package in packages %}
-                <option value="{{ package.name }}">{{ package.name }}</option>
+                <option value="{{ package.url }}">{{ package.name }}</option>
             {% endfor %}
             </select>
             <button id="add-user-button">Add User</button>
@@ -41,16 +41,13 @@
         <tr class="thead">
             <th>Who?</th>
             <th>Athletes?</th>
-            <th>Tabs</th>
+            <th>Level</th>
         </tr>
         {% for user in users %}
         <tr>
-            <td id="{{user.hash}}">{{ user.name }}
-                <a href="#"><i class="fa fa-paste"></i></a>
-                <a href="#"><i class="fa fa-times"></i></a>
-            </td>
-            <td>Empty</td>
-            <td>Empty</td>
+            <td class="who-row" id="{{user.hash}}"><div class="linkbox"><a href="#"><i class="fa fa-paste"></i></a><a href="#"><i class="fa fa-times"></i></a></div><p>{{ user.name }}</p></td>
+            <td class="athlete-row">Empty</td>
+            <td class="package-row">{{ user.package.name }}</td>
         </tr>
         {% endfor %}
     </table>

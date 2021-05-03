@@ -11,7 +11,6 @@ use crate::core::Database;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::tera::Context;
 use rocket_contrib::templates::Template;
-use sled_extensions::DbExt;
 
 #[catch(404)]
 fn not_found() -> Template {
@@ -20,17 +19,20 @@ fn not_found() -> Template {
 }
 
 fn ignite() -> rocket::Rocket {
-    let db = sled_extensions::Config::default()
-        .path("./database")
-        .open()
-        .expect("Failed to open sled DB");
+    let db = sled::open("./database").expect("failed to open database");
 
     rocket::ignite()
         .attach(Template::fairing())
         .manage(Database {
             gyms: db
-                .open_bincode_tree("gyms")
+                .open_tree("gyms")
                 .expect("failed to open gym tree"),
+            users: db
+                .open_tree("users")
+                .expect("failed to open user tree"),
+            packages: db
+                .open_tree("packages")
+                .expect("failed to open package tree"),
         })
         .mount("/static", StaticFiles::from("static"))
         .mount("/", routes::index())

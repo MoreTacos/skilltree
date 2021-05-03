@@ -11,7 +11,7 @@
     <body class="tree-container">
         <nav>
         <ul>
-          {% for tab in tabs %}
+          {% for tab in package.tabs %}
             <li><h4><a href="/user?g={{ gymurl }}&u={{ userhash }}&s={{ tab.url }}">{{ tab.name }}</a></h4></li>
           {% endfor %}
         </ul>
