@@ -3,12 +3,14 @@ use std::error::Error;
 use std::fs;
 use std::path::PathBuf;
 
+#[derive(Deserialize, Serialize, Clone, Debug, Default)]
 pub struct Package {
     pub name: String,
     pub url: String,
     pub tabs: Vec<Tab>,
 }
 
+#[derive(Deserialize, Serialize, Clone, Debug, Default)]
 pub struct Tab {
     pub name: String,
     pub url: String,
@@ -16,7 +18,10 @@ pub struct Tab {
 }
 
 impl Package {
-    fn new(packagepath: &str) -> Package {
+    pub fn get_tab_path(&self, taburl: &str) -> String {
+        self.tabs.iter().find(|tab| tab.url == taburl).unwrap().path.clone()
+    }
+    pub fn new(packagepath: &str) -> Package {
         let packagepath = PathBuf::from(packagepath);
         let name: String = packagepath.file_stem().unwrap().to_str().unwrap().into();
         let url: String = name.chars().filter(|c| c.is_alphanumeric()).collect::<String>().to_lowercase();
@@ -109,7 +114,7 @@ pub fn parsetab(name: &str, package: &str, svg: &str) -> Result<(), Box<dyn Erro
 
         // input slider
         let onchange = format!(
-            r###"fetch(`/update?g={{{{ gymurl }}}}&u={{{{ userhash }}}}&s={}&v=${{this.value}}`, {{ method: 'PUT' }})"###,
+            r###"fetch(`/update?&u={{{{ userhash }}}}&s={}&v=${{this.value}}`, {{ method: 'PUT' }})"###,
             &skill
         );
         let oninput = r###"this.closest('g').previousElementSibling.style.fill = `hsl(${this.value}, 50%, 50%)`"###;
