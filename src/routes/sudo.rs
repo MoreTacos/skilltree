@@ -71,7 +71,7 @@ fn create_package(
         for tab in tabs {
             parsetab(&tab.0, &name, &tab.1).unwrap();
         }
-        db.reload_tabs().unwrap();
+        //db.reload_tabs().unwrap();
         Ok(status::Accepted(Some(format!(
             "Successfully created tab package {}",
             &name

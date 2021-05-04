@@ -24,15 +24,8 @@ fn ignite() -> rocket::Rocket {
     rocket::ignite()
         .attach(Template::fairing())
         .manage(Database {
-            gyms: db
-                .open_tree("gyms")
-                .expect("failed to open gym tree"),
-            users: db
-                .open_tree("users")
-                .expect("failed to open user tree"),
-            packages: db
-                .open_tree("packages")
-                .expect("failed to open package tree"),
+            gyms: db.open_tree("gyms").expect("failed to open gym tree"),
+            users: db.open_tree("users").expect("failed to open user tree"),
         })
         .mount("/static", StaticFiles::from("static"))
         .mount("/", routes::index())

@@ -1,35 +1,38 @@
 use crate::core::Database;
 use crate::core::DatabaseExt;
-use crate::core::Package;
 use crate::core::Gym;
+use crate::core::Tab;
+use crate::core::Package;
 use crate::core::User;
-use rocket::http::{Cookie, Cookies};
-use rocket::outcome::IntoOutcome;
-use rocket::request::Form;
-use rocket::request::{self, FromRequest, Request};
 use rocket::response::{Flash, Redirect};
 use rocket::Route;
 use rocket::State;
 use rocket_contrib::templates::tera::Context;
 use rocket_contrib::templates::tera::Tera;
 use rocket_contrib::templates::Template;
-use serde::Serialize;
-use std::collections::HashMap;
 
 pub fn user() -> Vec<Route> {
-    routes![user_forward, user_index, update_user_skill]
+    routes![user_home, 
+    //user_index, update_user_skill
+    ]
 }
 
-#[get("/user?<g>&<u>", rank = 2)]
-fn user_forward(db: State<Database>, g: String, u: String) -> Redirect {
-    let tabdefault = db.get_user_tab_default(&g, &u);
-    Redirect::to(format!("/user?g={}&u={}&s={}", g, u, &tabdefault.url))
+#[get("/user?<u>", rank = 2)]
+fn user_home(db: State<Database>, u: String) -> Template {
+    //Redirect::to(format!("/user?&u={}&s={}", u, &tabdefault.url))
+    let user: User = db.get_user(&u).unwrap().unwrap();
+    let package = Package::new(&user.packagepath);
+    let mut context: Context = Context::new();
+    context.insert("name", &user.name);
+    context.insert("userhash", &user.userurl);
+    context.insert("package", &package);
+    Template::render("tree", &context)
 }
 
-#[get("/user?<g>&<u>&<s>")]
+/*
+#[get("/user?<u>&<s>")]
 fn user_index(
     db: State<Database>,
-    g: String,
     u: String,
     s: String,
 ) -> rocket::response::content::Html<String> {
@@ -55,10 +58,9 @@ fn user_index(
     rocket::response::content::Html(tera.render(&s, &context).unwrap())
 }
 
-#[put("/update?<g>&<u>&<s>&<v>")]
+#[put("/update?<u>&<s>&<v>")]
 fn update_user_skill(
     db: State<Database>,
-    g: String,
     u: String,
     s: String,
     v: usize,
@@ -66,3 +68,4 @@ fn update_user_skill(
     db.update_user_skill(&g, &u, &s, v).unwrap();
     rocket::response::status::Accepted(Some("Success".to_string()))
 }
+*/

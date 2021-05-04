@@ -1,57 +1,58 @@
+use bincode::Options;
 use pwhash::bcrypt;
 use serde::Deserialize;
 use serde::Serialize;
+use sled::IVec;
 use std::collections::HashMap;
-use crate::core::Tab;
-use crate::core::Package;
-
-type Hash = String; // the userhash
-type Url = String; // the tab's url
 
 #[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct User {
     pub name: String,
-    pub hash: Hash,
+    pub userurl: String,
+    pub gymemail: String,
+    pub packagepath: String,
     pub skills: HashMap<String, usize>,
-    pub athletes: Vec<Hash>,
-    pub package: Package,
 }
 
 impl User {
-    pub fn new(
-        name: String,
-        skills: HashMap<String, usize>,
-        athletes: Vec<Hash>,
-        package: Package,
-    ) -> Self {
-        let mut hash: String = bcrypt::hash(&name)
+    pub fn new(name: &str, gymemail: &str) -> Self {
+        let name = name.to_string();
+        let gymemail = gymemail.to_string();
+        let packagepath = "./templates/src/Recreational".to_string();
+        let mut userurl: String = bcrypt::hash(&name)
             .unwrap()
             .to_lowercase()
             .chars()
             .filter(|c| c.is_alphanumeric())
             .collect();
-        hash.truncate(7);
+        userurl.truncate(7);
+        let skills = HashMap::new();
         User {
             name,
-            hash,
+            userurl,
+            gymemail,
             skills,
-            athletes,
-            package,
+            packagepath,
         }
     }
-    pub fn rename(&mut self, rename: &str) {
-        self.name = rename.to_string();
+}
+
+impl From<User> for IVec {
+    fn from(user: User) -> Self {
+        IVec::from(
+            bincode::DefaultOptions::new()
+                .with_big_endian()
+                .serialize(&user)
+                .unwrap(),
+        )
     }
-    pub fn is_athlete(&self) -> bool {
-        !self.skills.is_empty()
-    }
-    pub fn is_coach(&self) -> bool {
-        !self.athletes.is_empty()
-    }
-    pub fn insert(&mut self, skill: &str, level: usize) {
-        self.skills.insert(skill.into(), level);
-    }
-    pub fn push(&mut self, athlete: Hash) {
-        self.athletes.push(athlete)
+}
+
+impl From<IVec> for User {
+    fn from(ivec: IVec) -> Self {
+        bincode::DefaultOptions::new()
+            .with_big_endian()
+            .deserialize(&ivec[..])
+            .unwrap()
     }
 }

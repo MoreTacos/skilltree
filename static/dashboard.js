@@ -8,19 +8,8 @@ function addUserButton() {
     document.getElementById('new-user-form').style.display = 'none';
     document.getElementById('bg-cover').style.display = 'none';
     let name = document.getElementById('name').value;
-    let iscoach = document.getElementById('iscoach').value;
-    if (iscoach == "on") {
-        iscoach = true;
-    } else {
-        iscoach = false;
-    }
-    let tabs_select = document.getElementById('tabs');
-    let tabs = tabs_select.value;
-    let tab_text = tabs_select.options[tabs_select.selectedIndex].text;
     let data = {
         name: name,
-        iscoach: iscoach,
-        tabs_package_url: tabs,
     };
     fetch('/add-user', {
         method: 'POST',
@@ -30,7 +19,7 @@ function addUserButton() {
         body: JSON.stringify(data),
     }).then(response => response.json()).then(id => {
         let table = document.getElementById('table');
-        let row = table.insertRow(1);
+        let row = table.insertRow(0);
         let who = row.insertCell(0);
         who.classList.add("who-row");
 
@@ -64,12 +53,6 @@ function addUserButton() {
         p.innerHTML = name;
         who.appendChild(p);
 
-        let athletes = row.insertCell(1);
-        athletes.classList.add("athlete-row");
-        athletes.innerHTML = "Empty";
-        let tabs_row = row.insertCell(2);
-        tabs_row.classList.add("package-row");
-        tabs_row.innerHTML = tab_text;
         document.getElementById('name').value = "";
     }).catch(err => {
         console.log(err);
@@ -86,7 +69,6 @@ document.getElementById('close-user-button').addEventListener("click", closeUser
 // Remove User Button
 function removeUserButton() {
     let hash = this.parentNode.parentNode.id;
-    console.log(hash);
     fetch(`/remove-user`, { 
         method: 'DELETE',
         headers: {
@@ -107,7 +89,7 @@ function copyUserButton() {
     let id = this.parentNode.parentNode.id;
     let baseurl = window.location.origin;
 
-    let userlink = `${baseurl}/user?g=${gym}&u=${id}`;
+    let userlink = `${baseurl}/user?u=${id}`;
 
     let el = document.createElement("textarea");
     el.value = userlink;
