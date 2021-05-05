@@ -23,8 +23,9 @@ impl User {
             .unwrap()
             .to_lowercase()
             .chars()
+            .rev()
             .filter(|c| c.is_alphanumeric())
-            .collect();
+            .collect::<String>();
         userurl.truncate(7);
         let skills = HashMap::new();
         User {

@@ -4,9 +4,9 @@ mod user;
 
 pub use gym::Gym;
 pub use tab::parsetab;
-pub use user::User;
-pub use tab::Tab;
 pub use tab::Package;
+pub use tab::Tab;
+pub use user::User;
 
 use pwhash::bcrypt;
 use rocket::outcome::IntoOutcome;
@@ -29,12 +29,13 @@ pub trait DatabaseExt {
     fn add_user(&mut self, name: &str, gymemail: &str) -> Result<User, Box<dyn Error>>;
     fn get_user(&self, userurl: &str) -> Result<Option<User>, Box<dyn Error>>;
     fn get_gym_users(&self, gymemail: &str) -> Result<Vec<User>, Box<dyn Error>>;
-    fn update_user(
+    fn update_user_skill(
         &mut self,
         userurl: &str,
         skill: &str,
         value: usize,
     ) -> Result<Option<User>, Box<dyn Error>>;
+    fn update_user_tab_package(&mut self, userurl: &str, packageurl: &str) -> Result<Option<User>, Box<dyn Error>>;
     fn remove_user(&mut self, userurl: &str) -> Result<Option<User>, Box<dyn Error>>;
 }
 
@@ -69,13 +70,12 @@ impl DatabaseExt for State<'_, Database> {
             .iter()
             .map(|kv| User::from(kv.unwrap().1))
             .filter(|u| {
-                dbg!(&u);
                 u.gymemail == gymemail
             })
             .collect();
         Ok(users)
     }
-    fn update_user(
+    fn update_user_skill(
         &mut self,
         userurl: &str,
         skill: &str,
@@ -85,6 +85,17 @@ impl DatabaseExt for State<'_, Database> {
             Some(user) => {
                 let mut user: User = User::from(user);
                 user.skills.insert(skill.into(), value);
+                self.users.insert(userurl, user.clone())?;
+                Ok(Some(user))
+            }
+            None => panic!("Updating user that doesn't exist"),
+        }
+    }
+    fn update_user_tab_package(&mut self, userurl: &str, packageurl: &str) -> Result<Option<User>, Box<dyn Error>> {
+        match self.users.remove(userurl)? {
+            Some(user) => {
+                let mut user: User = User::from(user);
+                user.packagepath = Package::all().iter().find(|p| p.url == packageurl).unwrap().packagepath.clone();
                 self.users.insert(userurl, user.clone())?;
                 Ok(Some(user))
             }

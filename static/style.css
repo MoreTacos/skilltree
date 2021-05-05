@@ -308,6 +308,10 @@ nav ul li {
     padding: 1em;
 }
 
+.userhome {
+    margin-top: 3em;
+}
+
 .user-container {
     display: flex;
     flex-flow: column;

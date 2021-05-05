@@ -1,8 +1,0 @@
-{% extends "user" %}
-
-{% block tree %}
-<div class="container">
-    <h1>{{ name }}</h1>
-    <script src="./static/userhome.js"></script>
-</div>
-{% endblock %}

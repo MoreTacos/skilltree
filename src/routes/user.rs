@@ -12,18 +12,21 @@ use rocket_contrib::templates::tera::Tera;
 use rocket_contrib::templates::Template;
 
 pub fn user() -> Vec<Route> {
-    routes![user_home, user_index, update_user_skill]
+    routes![user_home, user_index, update_user_skill, update_user_tab_package]
 }
 
 #[get("/user?<u>", rank = 2)]
 fn user_home(db: State<Database>, u: String) -> Template {
     let user: User = db.get_user(&u).unwrap().unwrap();
     let package = Package::new(&user.packagepath);
+    let packages = Package::all();
     let mut context: Context = Context::new();
     context.insert("name", &user.name);
     context.insert("userhash", &user.userurl);
+    context.insert("packagepath", &user.packagepath);
     context.insert("package", &package);
-    Template::render("tree", &context)
+    context.insert("packages", &packages);
+    Template::render("userhome", &context)
 }
 
 #[get("/user?<u>&<s>")]
@@ -60,6 +63,16 @@ fn update_user_skill(
     s: String,
     v: usize,
 ) -> rocket::response::status::Accepted<String> {
-    db.update_user(&u, &s, v).unwrap();
+    db.update_user_skill(&u, &s, v).unwrap();
+    rocket::response::status::Accepted(Some("Success".to_string()))
+}
+
+#[put("/package?<u>&<p>")]
+fn update_user_tab_package(
+    mut db: State<Database>,
+    u: String,
+    p: String,
+) -> rocket::response::status::Accepted<String> {
+    db.update_user_tab_package(&u, &p).unwrap();
     rocket::response::status::Accepted(Some("Success".to_string()))
 }
