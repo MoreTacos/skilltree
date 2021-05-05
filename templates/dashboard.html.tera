@@ -1,0 +1,36 @@
+{% extends "layout" %}
+
+{% block body %}
+<div class="container">
+<div class="dashboard">
+    <div class="dashboard-header">
+    <h3>{{ name }} Dashboard</h3>
+    <div class="dashboard-options">
+    <div class="search">
+        <label id="search">Search</label>
+        <input type="text" for="search" name="search">
+    </div>
+    <div class="new-button">
+        <div id="bg-cover"></div>
+        <button id="new-user-button">New User</button>
+        <div id="new-user-form">
+        <form action="#" onsubmit="return false">
+            <input type="text" id="name" placeholder="full name">
+            <button id="add-user-button">Add User</button>
+            <button id="close-user-button">Cancel</button>
+        </form>
+        </div>
+    </div>
+    </div>
+    </div>
+    <table id="table">
+        {% for user in users %}
+        <tr>
+            <td class="who-row" id="{{user.userurl}}"><div class="linkbox"><a href="#"><i class="fa fa-paste"></i></a><a href="#"><i class="fa fa-times"></i></a></div><p>{{ user.name }}</p></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<script src="./static/dashboard.js"></script>
+</div>
+{% endblock %}

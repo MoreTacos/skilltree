@@ -1,0 +1,39 @@
+<!DOCTYPE html5>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        <title>SkillTree — Plan Your Progress</title>
+        <link rel="stylesheet" href="/static/style.css"></link>
+        <link href="http://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" type="text/css"></link>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body class="body">
+      <header class="main-header">
+        <div class="logo">
+          <a href="/">
+            <img src="./static/img/logo.svg" alt="Logo" />
+            <p>SkillTree</p>
+          </a>
+        </div>
+        <ul>
+        {% if iscoach %}
+          <li><p><a href="/">My Athletes</a></p></li>
+        {% endif %}
+        {% if isathlete %}
+          <li><p><a href="/">My Skills</a></p></li>
+        {% endif %}
+        {% if isadmin %}
+          <li><p><a href="/dashboard">Dashboard</a></p></li>
+          <li><p><a href="/logout">Logout</a></p></li>
+        {% else %}
+          <li><p><a href="/discover">Discover</a></p></li>
+          <li><p><a href="/join">Join</a></p></li>
+        {% endif %}
+        </ul>
+      </header>
+        <main>
+          {% block body %}{{ super() }}{% endblock %}
+        </main>
+    </body>
+</html>

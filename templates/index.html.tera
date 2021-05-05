@@ -1,0 +1,14 @@
+{% extends "layout" %}
+
+{% block body %}
+<div class="container">
+    <div class="left">
+        <img src="./static/img/demo.svg" alt="Demo Tree">
+    </div>
+    <div class="right">
+        <h1>Plan Your Progress</h1>
+        <h3>Log your gymnastics progress with a flow chart</h3>
+        <button>Join Now</button>
+    </div>
+</div>
+{% endblock %}

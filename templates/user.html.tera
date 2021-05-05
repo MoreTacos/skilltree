@@ -1,0 +1,25 @@
+<!DOCTYPE html5>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"></meta>
+        <title>SkillTree — Plan Your Progress</title>
+        <link rel="stylesheet" href="/static/style.css"></link>
+        <link href="http://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" type="text/css"></link>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body class="tree-container">
+        <nav>
+        <ul>
+            <li><h4><a href="/user?u={{ userhash }}">Home</a></h4></li>
+            {% for tab in package.tabs %}
+            <li><h4><a href="/user?u={{ userhash }}&s={{ tab.url }}">{{ tab.name }}</a></h4></li>
+            {% endfor %}
+        </ul>
+        </nav>
+        <main>
+            <div id="tree">{% block tree %}{{ super() }}{% endblock %}</div>
+        </main>
+    </body>
+    <script src="./static/user.js"></script>
+</html>
