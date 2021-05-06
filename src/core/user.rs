@@ -18,7 +18,7 @@ impl User {
     pub fn new(name: &str, gymemail: &str) -> Self {
         let name = name.to_string();
         let gymemail = gymemail.to_string();
-        let packagepath = "./templates/Packages/Men's Competitive".to_string();
+        let packagepath = "./templates/packages/Men's Competitive".to_string();
         let mut userurl: String = bcrypt::hash(&name)
             .unwrap()
             .to_lowercase()

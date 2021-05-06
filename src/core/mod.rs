@@ -3,7 +3,6 @@ mod tab;
 mod user;
 
 pub use gym::Gym;
-pub use tab::parsetab;
 pub use tab::Package;
 pub use tab::Tab;
 pub use user::User;

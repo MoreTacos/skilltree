@@ -80,6 +80,8 @@ fn update_user_tab_package(
 #[get("/skill?<s>")]
 fn skill_details(s: String) -> rocket::response::content::Html<String> {
     let mut tera = Tera::default();
-    tera.add_template_file(format!("./template/Pages/{}", &s), Some("skill")).unwrap();
-    rocket::response::content::Html(tera.render("skill", &()).unwrap())
+    let mut context = Context::new();
+    tera.add_template_file("./templates/docs.html.tera", Some("docs")).unwrap();
+    tera.add_template_file(format!("./templates/pages/{}", &s), Some("skill")).unwrap();
+    rocket::response::content::Html(tera.render("skill", &context).unwrap())
 }

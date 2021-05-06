@@ -1,4 +1,3 @@
-use crate::core::parsetab;
 use std::process::Command;
 use crate::core::Database;
 use crate::core::DatabaseExt;
@@ -16,7 +15,7 @@ use std::collections::HashMap;
 use std::error::Error;
 
 pub fn sudo() -> Vec<Route> {
-    routes![create_gym, reload_all]
+    routes![create_gym]
 }
 
 const H: &'static str = "$2y$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe";
@@ -50,15 +49,4 @@ fn create_gym(
             &name
         ))))
     }
-}
-
-/*
-for tab in tabs {
-    parsetab(&tab.0, &name, &tab.1).unwrap();
-}
-*/
-
-#[post("/reload_all")]
-fn reload_all() {
-    Command::new("git clone https://github.com/MoreTacos/skilltree-docs.git").current_dir("/tmp").status().unwrap();
 }
