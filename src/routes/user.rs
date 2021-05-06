@@ -12,7 +12,7 @@ use rocket_contrib::templates::tera::Tera;
 use rocket_contrib::templates::Template;
 
 pub fn user() -> Vec<Route> {
-    routes![user_home, user_index, update_user_skill, update_user_tab_package]
+    routes![user_home, user_index, update_user_skill, update_user_tab_package, skill_details]
 }
 
 #[get("/user?<u>", rank = 2)]
@@ -75,4 +75,11 @@ fn update_user_tab_package(
 ) -> rocket::response::status::Accepted<String> {
     db.update_user_tab_package(&u, &p).unwrap();
     rocket::response::status::Accepted(Some("Success".to_string()))
+}
+
+#[get("/skill?<s>")]
+fn skill_details(s: String) -> rocket::response::content::Html<String> {
+    let mut tera = Tera::default();
+    tera.add_template_file(format!("./template/Pages/{}", &s), Some("skill")).unwrap();
+    rocket::response::content::Html(tera.render("skill", &()).unwrap())
 }

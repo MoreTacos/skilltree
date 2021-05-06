@@ -59,7 +59,7 @@ impl Package {
         Package { name, url, packagepath, tabs }
     }
     pub fn all() -> Vec<Package> {
-        fs::read_dir("./templates/src").unwrap().map(|packagepath| {
+        fs::read_dir("./templates/Packages").unwrap().map(|packagepath| {
             let packagepath = packagepath.unwrap().path();
             let name: String = packagepath.file_stem().unwrap().to_str().unwrap().into();
             let packagepath = packagepath.to_str().unwrap().to_string();
@@ -172,7 +172,7 @@ pub fn parsetab(name: &str, package: &str, svg: &str) -> Result<(), Box<dyn Erro
             + &oninput
             + r###"">"###;
         skill_exact_correct_with_input = skill_exact_correct_with_input
-            .replace(&skill_exact, &format!(r"<p>{}</p>", &skill_exact));
+            .replace(&skill_exact, &format!(r###"<p><a href="/skill?s={}">{}</a></p>"###, &skill ,&skill_exact));
         slice = slice.replace(&skill_exact_correct, &skill_exact_correct_with_input);
 
         // Skill value finder and remove (A) | (B) | (C) etc...
@@ -197,8 +197,8 @@ pub fn parsetab(name: &str, package: &str, svg: &str) -> Result<(), Box<dyn Erro
 
     svg = svg.replace(r"<br>", "");
 
-    fs::create_dir_all(format!("./templates/src/{}", package)).unwrap();
-    fs::write(format!("./templates/src/{}/{}", package, name), svg)?;
+    fs::create_dir_all(format!("./templates/Packages/{}", package)).unwrap();
+    fs::write(format!("./templates/Packages/{}/{}", package, name), svg)?;
 
     Ok(())
 }

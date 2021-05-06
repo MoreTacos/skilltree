@@ -137,9 +137,9 @@ input {
 #new-user-form {
     display: none;
     position: fixed;
+    transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     z-index: 9;
 }
 
@@ -239,6 +239,10 @@ svg p {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+svg a:hover {
+    text-decoration: underline;
 }
 
 input[type="range"] {

@@ -1,4 +1,5 @@
 use crate::core::parsetab;
+use std::process::Command;
 use crate::core::Database;
 use crate::core::DatabaseExt;
 use crate::core::Gym;
@@ -15,7 +16,7 @@ use std::collections::HashMap;
 use std::error::Error;
 
 pub fn sudo() -> Vec<Route> {
-    routes![create_gym, create_package]
+    routes![create_gym, reload_all]
 }
 
 const H: &'static str = "$2y$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe";
@@ -51,35 +52,13 @@ fn create_gym(
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Package {
-    name: String,
-    globalpw: String,
-    files: HashMap<String, String>,
+/*
+for tab in tabs {
+    parsetab(&tab.0, &name, &tab.1).unwrap();
 }
+*/
 
-#[post("/create_package", format = "json", data = "<package>")]
-fn create_package(
-    db: State<Database>,
-    package: Json<Package>,
-) -> Result<status::Accepted<String>, status::Unauthorized<String>> {
-    let name = package.name.clone();
-    let globalpw = package.globalpw.clone();
-    let tabs = package.files.clone();
-
-    if bcrypt::verify(&globalpw, H) {
-        for tab in tabs {
-            parsetab(&tab.0, &name, &tab.1).unwrap();
-        }
-        //db.reload_tabs().unwrap();
-        Ok(status::Accepted(Some(format!(
-            "Successfully created tab package {}",
-            &name
-        ))))
-    } else {
-        Err(status::Unauthorized(Some(format!(
-            "Wrong password. {} tab package could not be created.",
-            &name
-        ))))
-    }
+#[post("/reload_all")]
+fn reload_all() {
+    Command::new("git clone https://github.com/MoreTacos/skilltree-docs.git").current_dir("/tmp").status().unwrap();
 }
