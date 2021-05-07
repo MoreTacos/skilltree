@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 fn main() {
     let mut skills: Vec<String> = vec![];
-    for path in glob("./Packages/**/*.svg").expect("Failed at glob") {
+    for path in glob("./packages/**/*.svg").expect("Failed at glob") {
         let mut svg = fs::read_to_string(path.unwrap()).unwrap();
 
         // Remove all <span> tags
@@ -171,7 +171,7 @@ fn main() {
     }
 
     for skill in skills {
-        let path = format!("./Pages/{}.md", &skill);
+        let path = format!("./pages/{}.md", &skill);
         if !Path::new(&path).exists() {
             let default = fs::read_to_string("./default.md").unwrap();
 
@@ -182,30 +182,37 @@ fn main() {
     for path in glob("./pages/*.md").expect("failed to glob") {
         let path = path.unwrap();
 
-        let skill = path.file_stem().unwrap().to_str().unwrap().to_string();
-        println!("Processing file: {}", &skill);
+        let metadata = fs::metadata(&path).unwrap();
+        let last_modified = metadata.modified().unwrap().elapsed().unwrap().as_secs();
 
-        let output = PathBuf::from(&format!("../templates/pages/{}.html", skill));
-        let output1 = output.clone().to_str().unwrap().to_string();
-        let output2 = format!("../templates/pages/{}", skill);
+        if last_modified < 60 * 30 && metadata.is_file() {
+            let skill = path.file_stem().unwrap().to_str().unwrap().to_string();
+            println!("Processing file: {}", &skill);
 
-        let mut pandoc = pandoc::new();
-        pandoc.add_input(&path);
-        pandoc.set_output(OutputKind::File(output));
-        pandoc.execute().unwrap();
+            let output = PathBuf::from(&format!("../templates/pages/{}.html", skill));
+            let output1 = output.clone().to_str().unwrap().to_string();
+            let output2 = format!("../templates/pages/{}", skill);
 
-        fs::rename(&output1, &output2).unwrap();
+            let mut pandoc = pandoc::new();
+            pandoc.add_input(&path);
+            pandoc.set_output(OutputKind::File(output));
+            pandoc.execute().unwrap();
 
-        let content = fs::read_to_string(&output2).unwrap();
+            fs::rename(&output1, &output2).unwrap();
 
-        let content = r###"{% extends "docs" %}
-    {% block body %}"###
+            let content = fs::read_to_string(&output2).unwrap();
+
+            let content = r###"{% extends "docs" %}
+
+{% block body %}
+"###
             .to_string()
-            + &content
-            + r###"
-                {% endblock %}
-                "###;
+                + &content
+                + r###"<div class="issue"><a href="https://github.com/MoreTacos/skilltree/tree/master/docs/pages/{{ skill }}.md">Add something to the page?</a></div>"###
+                + r###"
+{% endblock %}"###;
 
-        fs::write(output2, content).unwrap();
+            fs::write(output2, content).unwrap();
+        }
     }
 }
