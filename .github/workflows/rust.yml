@@ -3,8 +3,6 @@ name: Rust
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -16,23 +14,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build SvgTree
+    - name: Run docs
       run: |
-        cd skilltree_svg
+        cd docs
         rustup default nightly
-        cargo build --verbose
-    - name: Run tests Svg
+        cargo run --verbose
+        cd ../
+    - name: Commit files  # transfer the new html files back into the repository
       run: |
-        cd skilltree_svg
-        rustup default nightly
-        cargo test --verbose
-    - name: Build Web
-      run: |
-        cd skilltree_web
-        rustup default nightly
-        cargo build --verbose
-    - name: Run tests Web
-      run: |
-        cd skilltree_web
-        rustup default nightly
-        cargo test --verbose
+        git config --local user.name  ${{ github.actor }}
+        git add ./docs
+        git commit -m "Updating the repository GitHub html pages in the docs folder"
+    - name: Push changes  # push the output folder to your repo
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        force: true
