@@ -1,4 +1,3 @@
-use super::user::User;
 use bincode::Options;
 use pwhash::bcrypt;
 use serde::Deserialize;
@@ -18,7 +17,6 @@ impl Gym {
     pub fn new(name: &str, email: &str, pw: &str) -> Self {
         let name: String = name.to_string();
         let email: String = email.to_string();
-        let users: Vec<User> = vec![];
         let pwhash: String = bcrypt::hash(pw).unwrap();
         Gym {
             name,

@@ -54,6 +54,7 @@ fn create_gym(
 
 #[post("/insert_page?<n>", data = "<data>")]
 fn insert_page(n: String, data: Data) -> status::Accepted<String> {
+    fs::create_dir_all("./templates/pages").unwrap();
     data.stream_to_file(format!("./templates/pages/{}", n)).unwrap();
     status::Accepted(Some("Success".to_string()))
 }
