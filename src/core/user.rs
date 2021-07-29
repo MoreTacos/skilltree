@@ -10,7 +10,7 @@ pub struct User {
     pub name: String,
     pub userurl: String,
     pub gymemail: String,
-    pub packagepath: String,
+    pub packageurl: String,
     pub skills: HashMap<String, usize>,
 }
 
@@ -18,7 +18,7 @@ impl User {
     pub fn new(name: &str, gymemail: &str) -> Self {
         let name = name.to_string();
         let gymemail = gymemail.to_string();
-        let packagepath = "./templates/packages/Men's Competitive".to_string();
+        let packageurl = "MAG".to_string();
         let mut userurl: String = bcrypt::hash(&name)
             .unwrap()
             .to_lowercase()
@@ -32,8 +32,8 @@ impl User {
             name,
             userurl,
             gymemail,
+            packageurl,
             skills,
-            packagepath,
         }
     }
 }

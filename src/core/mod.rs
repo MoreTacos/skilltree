@@ -1,11 +1,13 @@
 mod gym;
-mod tab;
+mod package;
 mod user;
+mod skill;
 
 pub use gym::Gym;
-pub use tab::Package;
-pub use tab::Tab;
+pub use package::Package;
+pub use skill::Skill;
 pub use user::User;
+pub use package::Tab;
 
 use pwhash::bcrypt;
 use rocket::outcome::IntoOutcome;
@@ -19,6 +21,21 @@ use std::error::Error;
 pub struct Database {
     pub gyms: Tree,
     pub users: Tree,
+    pub packages: Vec<Package>,
+    pub skills: Vec<Skill>,
+}
+
+impl Database {
+    pub fn new(gyms: Tree, users: Tree, docs: &str) -> Self {
+        let packages = Package::load_all(docs);
+        let skills = Skill::load_all(docs);
+        Database {
+            gyms,
+            users,
+            packages,
+            skills,
+        }
+    }
 }
 
 pub trait DatabaseExt {
@@ -34,8 +51,12 @@ pub trait DatabaseExt {
         skill: &str,
         value: usize,
     ) -> Result<Option<User>, Box<dyn Error>>;
-    fn update_user_tab_package(&mut self, userurl: &str, packageurl: &str) -> Result<Option<User>, Box<dyn Error>>;
+    fn get_packages(&self) -> Vec<Package>;
+    fn get_package(&self, packageurl: &str) -> Package;
+    fn get_tab(&self, packageurl: &str, taburl: &str) -> Tab;
+    fn update_user_package(&mut self, userurl: &str, packageurl: &str) -> Result<Option<User>, Box<dyn Error>>;
     fn remove_user(&mut self, userurl: &str) -> Result<Option<User>, Box<dyn Error>>;
+    fn get_skill(&self, skill: &str) -> Skill;
 }
 
 impl DatabaseExt for State<'_, Database> {
@@ -90,11 +111,20 @@ impl DatabaseExt for State<'_, Database> {
             None => panic!("Updating user that doesn't exist"),
         }
     }
-    fn update_user_tab_package(&mut self, userurl: &str, packageurl: &str) -> Result<Option<User>, Box<dyn Error>> {
+    fn get_packages(&self) -> Vec<Package> {
+        self.packages.clone()
+    }
+    fn get_package(&self, packageurl: &str) -> Package {
+        self.get_packages().into_iter().find(|x| x.packageurl == packageurl).unwrap()
+    }
+    fn get_tab(&self, packageurl: &str, taburl: &str) -> Tab {
+        self.get_package(packageurl).tabs.into_iter().find(|x| x.taburl == taburl).unwrap()
+    }
+    fn update_user_package(&mut self, userurl: &str, packageurl: &str) -> Result<Option<User>, Box<dyn Error>> {
         match self.users.remove(userurl)? {
             Some(user) => {
                 let mut user: User = User::from(user);
-                user.packagepath = Package::all().iter().find(|p| p.url == packageurl).unwrap().packagepath.clone();
+                user.packageurl = packageurl.to_string();
                 self.users.insert(userurl, user.clone())?;
                 Ok(Some(user))
             }
@@ -104,6 +134,9 @@ impl DatabaseExt for State<'_, Database> {
     fn remove_user(&mut self, userurl: &str) -> Result<Option<User>, Box<dyn Error>> {
         let user: Option<User> = self.users.remove(userurl)?.map(|b: IVec| User::from(b));
         Ok(user)
+    }
+    fn get_skill(&self, skill: &str) -> Skill {
+        self.skills.clone().into_iter().find(|x| x.url == skill).unwrap().clone()
     }
 }
 

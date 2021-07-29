@@ -13,7 +13,7 @@
         <ul>
             <li><h4><a href="/user?u={{ userhash }}">Home</a></h4></li>
             {% for tab in package.tabs %}
-            <li><h4><a href="/user?u={{ userhash }}&s={{ tab.url }}">{{ tab.name }}</a></h4></li>
+            <li><h4><a href="/user?u={{ userhash }}&s={{ tab.taburl }}">{{ tab.taburl }}</a></h4></li>
             {% endfor %}
         </ul>
         </nav>
