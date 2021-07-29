@@ -17,19 +17,19 @@ use rocket::State;
 use sled::IVec;
 use sled::Tree;
 use std::error::Error;
-use std::sync::Mutex;
+use std::sync::RwLock;
 
 pub struct Database {
     pub gyms: Tree,
     pub users: Tree,
-    pub packages: Mutex<Vec<Package>>,
-    pub skills: Mutex<Vec<Skill>>,
+    pub packages: RwLock<Vec<Package>>,
+    pub skills: RwLock<Vec<Skill>>,
 }
 
 impl Database {
     pub fn new(gyms: Tree, users: Tree, docs: &str) -> Self {
-        let packages = Mutex::new(Package::load_all(docs));
-        let skills = Mutex::new(Skill::load_all(docs));
+        let packages = RwLock::new(Package::load_all(docs));
+        let skills = RwLock::new(Skill::load_all(docs));
         Database {
             gyms,
             users,
@@ -114,7 +114,7 @@ impl DatabaseExt for State<'_, Database> {
         }
     }
     fn get_packages(&self) -> Vec<Package> {
-        self.packages.lock().unwrap().clone()
+        self.packages.read().unwrap().clone()
     }
     fn get_package(&self, packageurl: &str) -> Package {
         self.get_packages().into_iter().find(|x| x.packageurl == packageurl).unwrap()
@@ -138,14 +138,14 @@ impl DatabaseExt for State<'_, Database> {
         Ok(user)
     }
     fn get_skill(&self, skill: &str) -> Skill {
-        self.skills.lock().unwrap().clone().into_iter().find(|x| x.url == skill).unwrap().clone()
+        self.skills.read().unwrap().clone().into_iter().find(|x| x.url == skill).unwrap().clone()
     }
     fn sync_docs(&mut self) {
         let skillsurl = "https://skilltreedocs.onrender.com/skills";
         let packagesurl = "https://skilltreedocs.onrender.com/packages";
-        let mut skills = self.skills.lock().unwrap();
+        let mut skills = self.skills.write().unwrap();
         *skills = reqwest::blocking::get(skillsurl).unwrap().json().unwrap();
-        let mut packages = self.packages.lock().unwrap();
+        let mut packages = self.packages.write().unwrap();
         *packages = reqwest::blocking::get(packagesurl).unwrap().json().unwrap();
     }
 }
