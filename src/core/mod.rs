@@ -17,18 +17,19 @@ use rocket::State;
 use sled::IVec;
 use sled::Tree;
 use std::error::Error;
+use std::sync::Mutex;
 
 pub struct Database {
     pub gyms: Tree,
     pub users: Tree,
-    pub packages: Vec<Package>,
-    pub skills: Vec<Skill>,
+    pub packages: Mutex<Vec<Package>>,
+    pub skills: Mutex<Vec<Skill>>,
 }
 
 impl Database {
     pub fn new(gyms: Tree, users: Tree, docs: &str) -> Self {
-        let packages = Package::load_all(docs);
-        let skills = Skill::load_all(docs);
+        let packages = Mutex::new(Package::load_all(docs));
+        let skills = Mutex::new(Skill::load_all(docs));
         Database {
             gyms,
             users,
@@ -57,6 +58,7 @@ pub trait DatabaseExt {
     fn update_user_package(&mut self, userurl: &str, packageurl: &str) -> Result<Option<User>, Box<dyn Error>>;
     fn remove_user(&mut self, userurl: &str) -> Result<Option<User>, Box<dyn Error>>;
     fn get_skill(&self, skill: &str) -> Skill;
+    fn sync_docs(&mut self);
 }
 
 impl DatabaseExt for State<'_, Database> {
@@ -112,7 +114,7 @@ impl DatabaseExt for State<'_, Database> {
         }
     }
     fn get_packages(&self) -> Vec<Package> {
-        self.packages.clone()
+        self.packages.lock().unwrap().clone()
     }
     fn get_package(&self, packageurl: &str) -> Package {
         self.get_packages().into_iter().find(|x| x.packageurl == packageurl).unwrap()
@@ -136,7 +138,15 @@ impl DatabaseExt for State<'_, Database> {
         Ok(user)
     }
     fn get_skill(&self, skill: &str) -> Skill {
-        self.skills.clone().into_iter().find(|x| x.url == skill).unwrap().clone()
+        self.skills.lock().unwrap().clone().into_iter().find(|x| x.url == skill).unwrap().clone()
+    }
+    fn sync_docs(&mut self) {
+        let skillsurl = "https://skilltreedocs.onrender.com/skills";
+        let packagesurl = "https://skilltreedocs.onrender.com/packages";
+        let mut skills = self.skills.lock().unwrap();
+        *skills = reqwest::blocking::get(skillsurl).unwrap().json().unwrap();
+        let mut packages = self.packages.lock().unwrap();
+        *packages = reqwest::blocking::get(packagesurl).unwrap().json().unwrap();
     }
 }
 

@@ -8,6 +8,7 @@ mod core;
 mod routes;
 
 use crate::core::Database;
+use rocket::fairing::AdHoc;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::tera::Context;
 use rocket_contrib::templates::Template;
