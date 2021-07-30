@@ -138,7 +138,10 @@ impl DatabaseExt for State<'_, Database> {
         Ok(user)
     }
     fn get_skill(&self, skill: &str) -> Skill {
-        self.skills.read().unwrap().clone().into_iter().find(|x| x.url == skill).unwrap().clone()
+        self.skills.read().unwrap().clone().into_iter().find(|x| x.url == skill).unwrap_or(Skill {
+            url: "NaN".to_string(),
+            content: "skill does not exist in DB yet".to_string(),
+        }).clone()
     }
     fn sync_docs(&mut self) {
         let skillsurl = "https://skilltreedocs.onrender.com/skills";

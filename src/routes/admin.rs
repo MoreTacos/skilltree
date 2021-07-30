@@ -48,7 +48,8 @@ fn login(db: State<Database>, mut cookies: Cookies, login: Form<Login>) -> Redir
 
 #[get("/dashboard")]
 fn dashboard(db: State<Database>, gym: Gym) -> Template {
-    let users = db.get_gym_users(&gym.email).unwrap();
+    let mut users = db.get_gym_users(&gym.email).unwrap();
+    users.sort_by(|a, b| a.name.cmp(&b.name));
     let mut context = Context::new();
     context.insert("isadmin", &true);
     context.insert("name", &gym.name);
