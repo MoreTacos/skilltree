@@ -185,6 +185,11 @@ option {
     color: black;
 }
 
+#divtable {
+    overflow-y: scroll;
+    height: 70vh;
+}
+
 table {
     margin-top: 1em;
     width: 100%;
