@@ -338,3 +338,7 @@ nav ul li {
 .tab-head ul li {
     padding: 1em;
 }
+
+.issue a {
+    font-size: 0.5em;
+}
