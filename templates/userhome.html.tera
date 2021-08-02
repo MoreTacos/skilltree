@@ -4,6 +4,7 @@
 <div class="container">
     <div class="userhome">
         <h1>{{ name }}</h1>
+        <input type="range" min="0" max="100" value="0">
         <div>
             <label for="package">My Level:</label>
             <select name="package" id="package">
