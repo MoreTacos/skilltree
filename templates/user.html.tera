@@ -21,5 +21,6 @@
             <div id="tree">{% block tree %}{{ super() }}{% endblock %}</div>
         </main>
     </body>
+    <script src="https://unpkg.com/@panzoom/panzoom@4.4.1/dist/panzoom.min.js"></script>
     <script src="./static/user.js"></script>
 </html>
