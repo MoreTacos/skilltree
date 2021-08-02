@@ -14,6 +14,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::error::Error;
+use std::{thread, time};
 
 pub fn sudo() -> Vec<Route> {
     routes![create_gym, sync]
@@ -54,6 +55,7 @@ fn create_gym(
 
 #[post("/sync")]
 fn sync(mut db: State<Database>) -> status::Accepted<String> {
+    thread::sleep(time::Duration::from(time::Duration::from_secs(5)));
     db.sync_docs();
     status::Accepted(Some("Sync database".to_string()))
 }
