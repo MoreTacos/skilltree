@@ -25,7 +25,7 @@ fn user_home(db: State<Database>, u: String) -> Template {
     let package = db.get_package(&user.packageurl);
     let packages = db.get_packages();
     let mut context: Context = Context::new();
-    context.insert("name", &user.name);
+    context.insert("username", &user.name);
     context.insert("userhash", &user.userurl);
     context.insert("packageurl", &user.packageurl);
     context.insert("package", &package);
