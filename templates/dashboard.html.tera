@@ -27,7 +27,7 @@
     <table id="table">
         {% for user in users %}
         <tr>
-            <td class="who-row" id="{{user.userurl}}"><div class="linkbox"><a href="#"><i class="fa fa-paste"></i></a><a href="#"><i class="fa fa-times"></i></a></div><p>{{ user.name }}</p></td>
+            <td class="who-row" id="{{user.userurl}}"><div class="linkbox"><a href="#"><i class="fa fa-paste"></i></a><a href="#"><i class="fa fa-times"></i></a></div><p><a href="/user?u={{ user.userurl }}" target="_blank" class="userlink">{{ user.name }}</a></p></td>
         </tr>
         {% endfor %}
     </table>

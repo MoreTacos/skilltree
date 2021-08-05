@@ -15,10 +15,10 @@ pub struct User {
 }
 
 impl User {
-    pub fn new(name: &str, gymemail: &str) -> Self {
+    pub fn new(name: &str, gymemail: &str, packageurl: &str, skills: HashMap<String, usize>) -> Self {
         let name = name.to_string();
         let gymemail = gymemail.to_string();
-        let packageurl = "MAG".to_string();
+        let packageurl = packageurl.to_string();
         let mut userurl: String = bcrypt::hash(&name)
             .unwrap()
             .to_lowercase()
@@ -27,7 +27,7 @@ impl User {
             .filter(|c| c.is_alphanumeric())
             .collect::<String>();
         userurl.truncate(7);
-        let skills = HashMap::new();
+        let skills = skills;
         User {
             name,
             userurl,

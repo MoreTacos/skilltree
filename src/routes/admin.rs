@@ -1,7 +1,6 @@
 use crate::core::Database;
 use crate::core::DatabaseExt;
 use crate::core::Gym;
-use crate::core::User;
 use rocket::http::{Cookie, Cookies};
 use rocket::request::Form;
 use rocket::response::status;
@@ -10,7 +9,6 @@ use rocket::Route;
 use rocket::State;
 use rocket_contrib::json::Json;
 use rocket_contrib::templates::tera::Context;
-use rocket_contrib::templates::tera::Tera;
 use rocket_contrib::templates::Template;
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -64,7 +62,9 @@ struct AddUser {
 
 #[post("/add-user", data = "<user>")]
 fn add_user(mut db: State<Database>, gym: Gym, user: Json<AddUser>) -> Json<String> {
-    let user = db.add_user(&user.name, &gym.email).unwrap();
+    let packageurl = "MAG";
+    let skills: HashMap<String, usize> = HashMap::new();
+    let user = db.add_user(&user.name, &gym.email, &packageurl, skills).unwrap();
     Json(user.userurl)
 }
 

@@ -342,3 +342,7 @@ nav ul li {
 .issue a {
     font-size: 0.5em;
 }
+
+.userlink:hover {
+    text-decoration: underline;
+}

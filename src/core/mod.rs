@@ -18,6 +18,7 @@ use sled::IVec;
 use sled::Tree;
 use std::error::Error;
 use std::sync::RwLock;
+use std::collections::HashMap;
 
 pub struct Database {
     pub gyms: Tree,
@@ -43,8 +44,9 @@ pub trait DatabaseExt {
     fn create_gym(&mut self, name: &str, gymemail: &str, pw: &str) -> Result<Gym, Box<dyn Error>>;
     fn get_gym(&self, gymemail: &str) -> Result<Option<Gym>, Box<dyn Error>>;
     fn verify_gym(&self, gymemail: &str, pw: &str) -> Result<Option<bool>, Box<dyn Error>>;
-    fn add_user(&mut self, name: &str, gymemail: &str) -> Result<User, Box<dyn Error>>;
+    fn add_user(&mut self, name: &str, gymemail: &str, packageurl: &str, skills: HashMap<String, usize>) -> Result<User, Box<dyn Error>>;
     fn get_user(&self, userurl: &str) -> Result<Option<User>, Box<dyn Error>>;
+    fn get_users(&self) -> Vec<User>;
     fn get_gym_users(&self, gymemail: &str) -> Result<Vec<User>, Box<dyn Error>>;
     fn update_user_skill(
         &mut self,
@@ -77,14 +79,18 @@ impl DatabaseExt for State<'_, Database> {
             .map(|g: Gym| bcrypt::verify(&pw, &g.pwhash));
         Ok(verified)
     }
-    fn add_user(&mut self, name: &str, gymemail: &str) -> Result<User, Box<dyn Error>> {
-        let user: User = User::new(name, gymemail);
+    fn add_user(&mut self, name: &str, gymemail: &str, packageurl: &str, skills: HashMap<String, usize>) -> Result<User, Box<dyn Error>> {
+        let user: User = User::new(name, gymemail, packageurl, skills);
         self.users.insert(&user.userurl, user.clone())?;
         Ok(user)
     }
     fn get_user(&self, userurl: &str) -> Result<Option<User>, Box<dyn Error>> {
         let user: Option<User> = self.users.get(userurl)?.map(|b: IVec| User::from(b));
         Ok(user)
+    }
+    fn get_users(&self) -> Vec<User> {
+        let users: Vec<User> = self.users.iter().map(|kv| User::from(kv.unwrap().1)).collect();
+        users
     }
     fn get_gym_users(&self, gymemail: &str) -> Result<Vec<User>, Box<dyn Error>> {
         let users: Vec<User> = self

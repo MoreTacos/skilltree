@@ -15,9 +15,10 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::error::Error;
 use std::{thread, time};
+use crate::core::User;
 
 pub fn sudo() -> Vec<Route> {
-    routes![create_gym, sync]
+    routes![create_gym, sync, export_athletes, import_athletes]
 }
 
 const H: &'static str = "$2y$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe";
@@ -58,4 +59,18 @@ fn sync(mut db: State<Database>) -> status::Accepted<String> {
     thread::sleep(time::Duration::from(time::Duration::from_secs(5)));
     db.sync_docs();
     status::Accepted(Some("Sync database".to_string()))
+}
+
+// g is gymemail
+#[get("/export")]
+fn export_athletes(db: State<Database>) -> Json<Vec<User>> {
+    Json(db.get_users())
+}
+
+#[post("/import", format="json", data = "<users>")]
+fn import_athletes(mut db: State<Database>, users: Json<Vec<User>>) -> status::Accepted<String> {
+    for user in users.into_inner() {
+        db.add_user(&user.name, &user.gymemail, &user.packageurl, user.skills).unwrap();
+    }
+    status::Accepted(Some("Success in importing data".to_string()))
 }
