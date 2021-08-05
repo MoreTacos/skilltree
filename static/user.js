@@ -8,9 +8,9 @@ Array.from(skills).forEach(function(rect) {
 const elem = document.getElementsByTagName("svg")[0];
 const panzoom = Panzoom(elem, {
     excludeClass: 'skill',
-    maxScale: 20,
-    minScale: 1,
-    step: 0.1,
+    maxScale: 10,
+    minScale: 1.5,
+    step: 0.15,
 });
 const parent = elem.parentElement;
 
