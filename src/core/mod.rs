@@ -2,8 +2,10 @@ mod gym;
 mod package;
 mod user;
 mod skill;
+mod group;
 
 pub use gym::Gym;
+pub use group::Group;
 pub use package::Package;
 pub use skill::Skill;
 pub use user::User;
@@ -22,17 +24,19 @@ use std::collections::HashMap;
 
 pub struct Database {
     pub gyms: Tree,
+    pub groups: Tree,
     pub users: Tree,
     pub packages: RwLock<Vec<Package>>,
     pub skills: RwLock<Vec<Skill>>,
 }
 
 impl Database {
-    pub fn new(gyms: Tree, users: Tree, docs: &str) -> Self {
+    pub fn new(gyms: Tree, groups: Tree, users: Tree, docs: &str) -> Self {
         let packages = RwLock::new(Package::load_all(docs));
         let skills = RwLock::new(Skill::load_all(docs));
         Database {
             gyms,
+            groups,
             users,
             packages,
             skills,
@@ -44,10 +48,13 @@ pub trait DatabaseExt {
     fn create_gym(&mut self, name: &str, gymemail: &str, pw: &str) -> Result<Gym, Box<dyn Error>>;
     fn get_gym(&self, gymemail: &str) -> Result<Option<Gym>, Box<dyn Error>>;
     fn verify_gym(&self, gymemail: &str, pw: &str) -> Result<Option<bool>, Box<dyn Error>>;
-    fn add_user(&mut self, name: &str, gymemail: &str, packageurl: &str, skills: HashMap<String, usize>) -> Result<User, Box<dyn Error>>;
+    fn add_user(&mut self, name: &str, gymemail: &str, groupurl: &str, packageurl: &str, skills: HashMap<String, usize>) -> Result<User, Box<dyn Error>>;
+    fn add_group(&mut self, name: &str, gymemail: &str) -> Result<Group, Box<dyn Error>>;
     fn get_user(&self, userurl: &str) -> Result<Option<User>, Box<dyn Error>>;
     fn get_users(&self) -> Vec<User>;
     fn get_gym_users(&self, gymemail: &str) -> Result<Vec<User>, Box<dyn Error>>;
+    fn get_gym_groups(&self, gymemail: &str) -> Result<Vec<Group>, Box<dyn Error>>;
+    fn get_group_users(&self, groupurl: &str) -> Result<Vec<User>, Box<dyn Error>>;
     fn update_user_skill(
         &mut self,
         userurl: &str,
@@ -79,10 +86,15 @@ impl DatabaseExt for State<'_, Database> {
             .map(|g: Gym| bcrypt::verify(&pw, &g.pwhash));
         Ok(verified)
     }
-    fn add_user(&mut self, name: &str, gymemail: &str, packageurl: &str, skills: HashMap<String, usize>) -> Result<User, Box<dyn Error>> {
-        let user: User = User::new(name, gymemail, packageurl, skills);
+    fn add_user(&mut self, name: &str, gymemail: &str, groupurl: &str, packageurl: &str, skills: HashMap<String, usize>) -> Result<User, Box<dyn Error>> {
+        let user: User = User::new(name, gymemail, groupurl, packageurl, skills);
         self.users.insert(&user.userurl, user.clone())?;
         Ok(user)
+    }
+    fn add_group(&mut self, name: &str, gymemail: &str) -> Result<Group, Box<dyn Error>> {
+        let group: Group = Group::new(name, gymemail);
+        self.groups.insert(&group.groupurl, group.clone())?;
+        Ok(group)
     }
     fn get_user(&self, userurl: &str) -> Result<Option<User>, Box<dyn Error>> {
         let user: Option<User> = self.users.get(userurl)?.map(|b: IVec| User::from(b));
@@ -101,6 +113,28 @@ impl DatabaseExt for State<'_, Database> {
                 u.gymemail == gymemail
             })
             .collect();
+        Ok(users)
+    }
+    fn get_gym_groups(&self, gymemail: &str) -> Result<Vec<Group>, Box<dyn Error>> {
+        let groups: Vec<Group> = self
+            .groups
+            .iter()
+            .map(|kv| Group::from(kv.unwrap().1))
+            .filter(|g| {
+                g.gymemail == gymemail
+            })
+        .collect();
+        Ok(groups)
+    }
+    fn get_group_users(&self, groupurl: &str) -> Result<Vec<User>, Box<dyn Error>> {
+        let users: Vec<User> = self
+            .users
+            .iter()
+            .map(|kv| User::from(kv.unwrap().1))
+            .filter(|u| {
+                u.groupurl == groupurl
+            })
+        .collect();
         Ok(users)
     }
     fn update_user_skill(

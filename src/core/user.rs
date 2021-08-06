@@ -10,14 +10,16 @@ pub struct User {
     pub name: String,
     pub userurl: String,
     pub gymemail: String,
+    pub groupurl: String,
     pub packageurl: String,
     pub skills: HashMap<String, usize>,
 }
 
 impl User {
-    pub fn new(name: &str, gymemail: &str, packageurl: &str, skills: HashMap<String, usize>) -> Self {
+    pub fn new(name: &str, gymemail: &str, groupurl: &str,  packageurl: &str, skills: HashMap<String, usize>) -> Self {
         let name = name.to_string();
         let gymemail = gymemail.to_string();
+        let groupurl = groupurl.to_string();
         let packageurl = packageurl.to_string();
         let mut userurl: String = bcrypt::hash(&name)
             .unwrap()
@@ -32,6 +34,7 @@ impl User {
             name,
             userurl,
             gymemail,
+            groupurl,
             packageurl,
             skills,
         }

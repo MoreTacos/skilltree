@@ -143,6 +143,15 @@ input {
     z-index: 9;
 }
 
+#new-group-form {
+    display: none;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    z-index: 9;
+}
+
 #bg-cover {
     display: none;
     position: absolute;
@@ -177,6 +186,33 @@ input {
     margin: 1em 0;
 }
 
+#new-group-form form input {
+    padding: 1em 0;
+}
+
+#new-group-form form label {
+    padding: 1em 0;
+}
+
+#new-group-form form .block {
+    display: block;
+}
+
+#new-group-form form .button {
+    background-color: #1762A7;
+    border: none;
+    padding: 1em 4em;
+    margin: 1em 0;
+}
+
+#new-group-form form select {
+    padding: 1em;
+}
+
+#new-group-form form button {
+    margin: 1em 0;
+}
+
 select {
     color: black;
 }
@@ -203,6 +239,14 @@ table {
 
 .athlete-row {
     width: 30%;
+}
+
+.grouplistitem {
+    padding-bottom: 1em;
+}
+
+.userlistitem {
+    padding-left: 1em;
 }
 
 .package-row {

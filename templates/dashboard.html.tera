@@ -1,38 +1,62 @@
-{% extends "layout" %}
-
-{% block body %}
+{% extends "layout" %} {% block body %}
 <div class="container">
-<div class="dashboard">
+  <div class="dashboard">
     <div class="dashboard-header">
-    <h3>{{ name }} Dashboard</h3>
-    <div class="dashboard-options">
-    <div class="search">
-        <label id="search">Search</label>
-        <input type="text" for="search" name="search">
-    </div>
-    <div class="new-button">
-        <div id="bg-cover"></div>
-        <button id="new-user-button">New User</button>
-        <div id="new-user-form">
-        <form action="#" onsubmit="return false">
-            <input type="text" id="name" placeholder="full name">
-            <button id="add-user-button">Add User</button>
-            <button id="close-user-button">Cancel</button>
-        </form>
+      <h3>{{ name }} Dashboard</h3>
+      <div class="dashboard-options">
+        <div class="search">
+          <label id="search">Search</label>
+          <input type="text" for="search" name="search" />
         </div>
-    </div>
-    </div>
+        <div class="new-button">
+          <div id="bg-cover"></div>
+          <button id="new-user-button">New User</button>
+          <div id="new-user-form">
+            <form action="#" onsubmit="return false">
+              <input type="text" id="username" placeholder="full name" />
+              <div>
+                <label for="group">Group:</label>
+                <select name="group" id="group">
+                  {% for group in groups %}
+                  <option value="{{ group.groupurl }}">{{ group.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <button id="add-user-button">Add User</button>
+              <button id="close-user-button">Cancel</button>
+            </form>
+          </div>
+
+          <button id="new-group-button">New Group</button>
+          <div id="new-group-form">
+            <form action="#" onsubmit="return false">
+              <input type="text" id="groupname" placeholder="full name" />
+              <button id="add-group-button">Add Group</button>
+              <button id="close-group-button">Cancel</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="divtable">
-    <table id="table">
-        {% for user in users %}
-        <tr>
-            <td class="who-row" id="{{user.userurl}}"><div class="linkbox"><a href="#"><i class="fa fa-paste"></i></a><a href="#"><i class="fa fa-times"></i></a></div><p><a href="/user?u={{ user.userurl }}" target="_blank" class="userlink">{{ user.name }}</a></p></td>
-        </tr>
+        <ul>
+        {% for group in groups %}
+            <li class="grouplistitem">
+                <p id="{{ group.groupurl }}">[{{ group.size }}] - <a class="{% for user in group.users %}{{ user.userurl }} {% endfor %}" href="#" onclick="openMultipleLinks(this)">{{ group.name }}</a></p>
+                <ul>
+                {% for user in group.users %}
+                    <li class="userlistitem">
+                        <a href="#"><i id="{{ user.userurl }}" class="fa fa-paste"></i></a>
+                        <a href="#"><i id="{{ user.userurl }}" class="fa fa-times"></i></a>
+                        <a href="/user?u={{ user.userurl }}" target="_blank" class="userlink">{{ user.name }}</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </li>
         {% endfor %}
-    </table>
+        </ul>
     </div>
-</div>
-<script src="./static/dashboard.js"></script>
+  </div>
+  <script src="./static/dashboard.js"></script>
 </div>
 {% endblock %}

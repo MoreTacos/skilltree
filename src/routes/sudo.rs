@@ -70,7 +70,7 @@ fn export_athletes(db: State<Database>) -> Json<Vec<User>> {
 #[post("/import", format="json", data = "<users>")]
 fn import_athletes(mut db: State<Database>, users: Json<Vec<User>>) -> status::Accepted<String> {
     for user in users.into_inner() {
-        db.add_user(&user.name, &user.gymemail, &user.packageurl, user.skills).unwrap();
+        db.add_user(&user.name, &user.gymemail, &user.groupurl, &user.packageurl, user.skills).unwrap();
     }
     status::Accepted(Some("Success in importing data".to_string()))
 }

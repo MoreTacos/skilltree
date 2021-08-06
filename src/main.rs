@@ -8,7 +8,6 @@ mod core;
 mod routes;
 
 use crate::core::Database;
-use rocket::fairing::AdHoc;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::tera::Context;
 use rocket_contrib::templates::Template;
@@ -22,11 +21,12 @@ fn not_found() -> Template {
 fn ignite() -> rocket::Rocket {
     let db = sled::open("./database").expect("failed to open database");
     let gyms = db.open_tree("gyms").expect("failed to open gym tree");
+    let groups = db.open_tree("groups").expect("failed to open groups tree");
     let users = db.open_tree("users").expect("failed to open user tree");
 
     rocket::ignite()
         .attach(Template::fairing())
-        .manage(Database::new(gyms, users, "https://skilltreedocs.onrender.com/"))
+        .manage(Database::new(gyms, groups, users, "https://skilltreedocs.onrender.com/"))
         .mount("/static", StaticFiles::from("static"))
         .mount("/", routes::index())
         .mount("/", routes::sudo())

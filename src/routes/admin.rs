@@ -12,9 +12,11 @@ use rocket_contrib::templates::tera::Context;
 use rocket_contrib::templates::Template;
 use serde::Deserialize;
 use std::collections::HashMap;
+use crate::core::User;
+use serde::Serialize;
 
 pub fn admin() -> Vec<Route> {
-    routes![base, login, dashboard, logout, add_user, remove_user]
+    routes![base, login, dashboard, logout, add_user, add_group, remove_user]
 }
 
 #[derive(FromForm)]
@@ -44,38 +46,73 @@ fn login(db: State<Database>, mut cookies: Cookies, login: Form<Login>) -> Redir
     }
 }
 
+#[derive(Serialize)]
+struct GroupContext {
+    name: String,
+    size: usize,
+    groupurl: String,
+    users: Vec<User>
+}
+
 #[get("/dashboard")]
 fn dashboard(db: State<Database>, gym: Gym) -> Template {
-    let mut users = db.get_gym_users(&gym.email).unwrap();
-    users.sort_by(|a, b| a.name.cmp(&b.name));
+    let users = db.get_gym_users(&gym.email).unwrap();
+    let groups = db.get_gym_groups(&gym.email).unwrap();
+    let mut groups: Vec<GroupContext> = groups.into_iter().map(|g| {
+        let users = db.get_group_users(&g.groupurl).unwrap();
+        let size = users.len();
+        let group = GroupContext {
+            name: g.name,
+            size,
+            groupurl: g.groupurl,
+            users,
+        };
+        group
+    })
+    .collect();
+    groups.sort_by(|a, b| a.name.cmp(&b.name));
     let mut context = Context::new();
     context.insert("isadmin", &true);
     context.insert("name", &gym.name);
     context.insert("users", &users);
+    context.insert("groups", &groups);
     Template::render("dashboard", &context)
 }
 
 #[derive(Debug, PartialEq, Eq, Deserialize)]
 struct AddUser {
     name: String,
+    groupurl: String,
 }
 
 #[post("/add-user", data = "<user>")]
 fn add_user(mut db: State<Database>, gym: Gym, user: Json<AddUser>) -> Json<String> {
     let packageurl = "MAG";
     let skills: HashMap<String, usize> = HashMap::new();
-    let user = db.add_user(&user.name, &gym.email, &packageurl, skills).unwrap();
+    let user = db.add_user(&user.name, &gym.email, &user.groupurl, &packageurl, skills).unwrap();
     Json(user.userurl)
 }
 
 #[derive(Debug, PartialEq, Eq, Deserialize)]
+struct AddGroup {
+    name: String,
+}
+
+#[post("/add-group", data = "<group>")]
+fn add_group(mut db: State<Database>, gym: Gym, group: Json<AddGroup>) -> Json<String> {
+    dbg!(&group.name);
+    let group = db.add_group(&group.name, &gym.email).unwrap();
+    Json(group.groupurl)
+}
+
+#[derive(Debug, PartialEq, Eq, Deserialize)]
 struct RemoveUser {
-    hash: String,
+    userurl: String,
 }
 
 #[delete("/remove-user", data = "<user>")]
 fn remove_user(mut db: State<Database>, gym: Gym, user: Json<RemoveUser>) -> Json<String> {
-    let user = db.get_user(&user.hash).unwrap().unwrap();
+    let user = db.get_user(&user.userurl).unwrap().unwrap();
     assert_eq!(gym.email, user.gymemail);
     db.remove_user(&user.userurl).unwrap();
     Json("Removed User".to_string())
