@@ -1,392 +1,448 @@
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    text-decoration: none;
-    font-family: 'Poppins', sans-serif;
-    color: white;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: "Poppins", sans-serif;
+  color: white;
 }
 
 .body {
-    max-width: 1150px;
-    margin: auto;
+  max-width: 1150px;
+  margin: auto;
 }
 
 body {
-    background: #2F303A;
+  background: #2f303a;
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 2em;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2em;
 }
 
 .logo a {
-    display: flex;
+  display: flex;
 }
 
 .logo a p {
-    padding: 0.8em 0.4em;
-    font-size: 2em;
+  padding: 0.8em 0.4em;
+  font-size: 2em;
 }
 
 header ul {
-    list-style: none;
-    display: flex;
+  list-style: none;
+  display: flex;
 }
 
 header ul li {
-    padding: 0 1em;
-    margin: auto;
+  padding: 0 1em;
+  margin: auto;
 }
 
 .container {
-    display: flex;
+  display: flex;
 }
 
 .left {
-    width: 50%;
+  width: 50%;
 }
 
 .left img {
-    width: 100%;
+  width: 100%;
 }
 
 .right {
-    width: 50%;
+  width: 50%;
 }
 
 .right h1 {
-    font-weight: normal;
+  font-weight: normal;
 }
 
 .right h3 {
-    font-weight: normal;
+  font-weight: normal;
 }
 
 button {
-    background-color: #1762A7;
-    border: none;
-    padding: 1em 4em;
+  background-color: #1762a7;
+  border: none;
+  padding: 1em 4em;
 }
 
 form {
-    background-color: #000533;
-    border-radius: 10px;
-    padding: 2em;
-    max-width: 400px;
-    margin: auto;
+  background-color: #000533;
+  border-radius: 10px;
+  padding: 2em;
+  max-width: 400px;
+  margin: auto;
 }
 
 label {
-    font-size: 1.3em;
+  font-size: 1.3em;
 }
 
 input {
-    border-color: #1762A7;
-    background-color: #000533;
+  border-color: #1762a7;
+  background-color: #000533;
 }
 
 #email {
-    width: 100%;
+  width: 100%;
 }
 
 #pw {
-    width: 100%;
+  width: 100%;
 }
 
 .submit {
-    background-color: #1762A7;
-    border: none;
-    padding: 1em 4em;
-    display: block;
-    margin: auto;
+  background-color: #1762a7;
+  border: none;
+  padding: 1em 4em;
+  display: block;
+  margin: auto;
 }
 
 .dashboard-header {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .dashboard-header h3 {
-    align-self: center;
+  align-self: center;
 }
 
 .dashboard {
-    width: 100%;
+  width: 100%;
 }
 
 .dashboard-options {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .coach-filter {
-    align-self: center;
+  align-self: center;
 }
 
 .new-button {
-    align-self: center;
+  align-self: center;
 }
 
 .dashboard-options div {
-    padding: 0 1em;
+  padding: 0 1em;
 }
 
 #new-user-form {
-    display: none;
-    position: fixed;
-    transform: translate(-50%, -50%);
-    top: 50%;
-    left: 50%;
-    z-index: 9;
+  display: none;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  z-index: 9;
 }
 
 #new-group-form {
-    display: none;
-    position: fixed;
-    transform: translate(-50%, -50%);
-    top: 50%;
-    left: 50%;
-    z-index: 9;
+  display: none;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  z-index: 9;
 }
 
 #bg-cover {
-    display: none;
-    position: absolute;
-    left: 0; right: 0; top: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 #new-user-form form input {
-    padding: 1em 0;
+  padding: 1em 0;
 }
 
 #new-user-form form label {
-    padding: 1em 0;
+  padding: 1em 0;
 }
 
 #new-user-form form .block {
-    display: block;
+  display: block;
 }
 
 #new-user-form form .button {
-    background-color: #1762A7;
-    border: none;
-    padding: 1em 4em;
-    margin: 1em 0;
+  background-color: #1762a7;
+  border: none;
+  padding: 1em 4em;
+  margin: 1em 0;
 }
 
 #new-user-form form select {
-    padding: 1em;
+  padding: 1em;
 }
 
 #new-user-form form button {
-    margin: 1em 0;
+  margin: 1em 0;
 }
 
 #new-group-form form input {
-    padding: 1em 0;
+  padding: 1em 0;
 }
 
 #new-group-form form label {
-    padding: 1em 0;
+  padding: 1em 0;
 }
 
 #new-group-form form .block {
-    display: block;
+  display: block;
 }
 
 #new-group-form form .button {
-    background-color: #1762A7;
-    border: none;
-    padding: 1em 4em;
-    margin: 1em 0;
+  background-color: #1762a7;
+  border: none;
+  padding: 1em 4em;
+  margin: 1em 0;
 }
 
 #new-group-form form select {
-    padding: 1em;
+  padding: 1em;
 }
 
 #new-group-form form button {
-    margin: 1em 0;
+  margin: 1em 0;
 }
 
 select {
-    color: black;
+  color: black;
 }
 
 option {
-    color: black;
+  color: black;
 }
 
 #divtable {
-    overflow-y: scroll;
-    height: 70vh;
+  overflow-y: scroll;
+  height: 70vh;
 }
 
 table {
-    margin-top: 1em;
-    width: 100%;
+  margin-top: 1em;
+  width: 100%;
 }
 
 .who-row {
-    display: flex;
-    width: 40%;
-    overflow: hidden;
+  display: flex;
+  width: 40%;
+  overflow: hidden;
 }
 
 .athlete-row {
-    width: 30%;
+  width: 30%;
 }
 
 .grouplistitem {
-    padding-bottom: 1em;
+  padding-bottom: 1em;
 }
 
 .userlistitem {
-    padding-left: 1em;
+  padding-left: 1em;
 }
 
 .package-row {
-    width: 30%;
+  width: 30%;
 }
 
 .linkbox {
-    margin: auto 0;
-    display: flex;
+  margin: auto 0;
+  display: flex;
 }
 
 th {
-    text-align: left;
+  text-align: left;
 }
 
 i {
-    cursor: pointer;
-    padding: 0 0.2em;
+  cursor: pointer;
+  padding: 0 0.2em;
 }
 
 svg {
-    background-color: #2F303A !important;
+  background-color: #2f303a !important;
 }
 
 svg div {
-    color: white !important;
-    font-family: 'Poppins', sans-serif !important;
-    font-size: 0.8em !important;
-    display: flex !important;
-    flex-direction: column;
+  color: white !important;
+  font-family: "Poppins", sans-serif !important;
+  font-size: 0.8em !important;
+  display: flex !important;
+  flex-direction: column;
 }
 
 svg p {
-    margin: 1.2em;
+  margin: 1.2em;
 
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 svg a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 input[type="range"] {
-    -webkit-appearance: none !important;
-    width: 80%;
-    height: 4px;
-    background-color: grey;
-    border: 1px solid grey;
-    border-radius: 5px;
-    margin: auto;
+  -webkit-appearance: none !important;
+  width: 80%;
+  height: 4px;
+  background-color: grey;
+  border: 1px solid grey;
+  border-radius: 5px;
+  margin: auto;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none !important;
-    width: 15px;
-    height: 15px;
-    background: white;
-    border-radius: 50%;
+  -webkit-appearance: none !important;
+  width: 15px;
+  height: 15px;
+  background: white;
+  border-radius: 50%;
 }
 
 path {
-    stroke: white;
-    fill: none;
+  stroke: white;
+  fill: none;
 }
 
 rect {
-    stroke: none;
+  stroke: none;
+  transition: all 0.4s ease-out;
 }
 
 #tree {
-    height: 100vh;
-    width: 100vw;
-    position: absolute;
-    padding: 2em;
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  padding: 2em;
 }
 
 body {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 svg {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
 nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #000533;
-    border-radius: 1em;
-    margin: 1em;
-    opacity: 50%;
-    z-index: 8;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #000533;
+  border-radius: 1em;
+  margin: 1em;
+  opacity: 50%;
+  z-index: 8;
 }
 
 nav:hover {
-    opacity: 100%;
+  opacity: 100%;
 }
 
 nav ul {
-    display: flex;
-    list-style: none;
+  display: flex;
+  list-style: none;
 }
 
 nav ul li {
-    padding: 1em;
+  padding: 1em;
 }
 
 .userhome {
-    margin-top: 3em;
+  margin-top: 3em;
 }
 
 .user-container {
-    display: flex;
-    flex-flow: column;
+  display: flex;
+  flex-flow: column;
 }
 
 .tab-head {
-    display: flex;
+  display: flex;
 }
 
 .tab-head ul {
-    display: flex;
-    list-style: none;
+  display: flex;
+  list-style: none;
 }
 
 .tab-head ul li {
-    padding: 1em;
+  padding: 1em;
 }
 
 .issue a {
-    font-size: 0.5em;
+  font-size: 0.5em;
 }
 
 .userlink:hover {
-    text-decoration: underline;
+  text-decoration: underline;
+}
+
+.toggle-div {
+  display: flex !important;
+  margin-bottom: -0.8em;
+  flex-direction: row !important;
+}
+
+.toggle-div input {
+  cursor: pointer;
+}
+
+input[type="radio"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: #fff;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #9A9A9A;
+}
+
+input[type="radio"]:checked {
+    background-color: #C0C0C0;
+}
+
+rect + g switch foreignObject div div {
+    width: 100%;
+}
+
+rect + g switch foreignObject div div div {
+    display: block;
+    width: 80%;
+    margin: auto;
+}
+
+ellipse {
+    fill: white !important;
+}
+
+ellipse + g switch foreignObject div div div {
+    color: black !important;
+    width: 80%;
+    margin: auto;
+}
+
+.radio-item {
+    display: flex;
+    flex-direction: row;
+    padding: 1em;
+    align-items: center;
 }

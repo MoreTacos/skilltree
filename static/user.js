@@ -7,7 +7,7 @@ Array.from(skills).forEach(function(rect) {
 });
 const elem = document.getElementsByTagName("svg")[0];
 const panzoom = Panzoom(elem, {
-    excludeClass: 'skill',
+    excludeClass: 'toggle',
     maxScale: 10,
     minScale: 0.35,
     step: 0.15,

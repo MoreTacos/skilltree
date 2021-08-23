@@ -26,7 +26,7 @@ fn user_home(db: State<Database>, u: String) -> Template {
     let packages = db.get_packages();
     let mut context: Context = Context::new();
     context.insert("username", &user.name);
-    context.insert("userhash", &user.userurl);
+    context.insert("userurl", &user.userurl);
     context.insert("packageurl", &user.packageurl);
     context.insert("package", &package);
     context.insert("packages", &packages);
@@ -52,7 +52,7 @@ fn user_index(
 
     let mut context = Context::new();
     context.insert("username", &user.name);
-    context.insert("userhash", &u);
+    context.insert("userurl", &u);
     context.insert("package", &package);
 
     context.insert("skills", &user.skills.clone());
