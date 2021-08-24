@@ -5,6 +5,10 @@ Array.from(skills).forEach(function(rect) {
 
     rect.nextSibling.classList.add("skill")
 });
+
+let width = window.width;
+console.log(width);
+
 const elem = document.getElementsByTagName("svg")[0];
 const panzoom = Panzoom(elem, {
     excludeClass: 'toggle',
@@ -12,8 +16,14 @@ const panzoom = Panzoom(elem, {
     minScale: 0.35,
     step: 0.15,
 });
+
 const parent = elem.parentElement;
 
 parent.addEventListener('wheel', function(event) {
     panzoom.zoomWithWheel(event)
-})
+});
+
+elem.addEventListener('panzoomzoom', (event) => {
+    console.log(event);
+    panzoom.setOptions({ step: (event.detail.scale*0.1)  });
+});
