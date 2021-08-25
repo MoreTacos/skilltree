@@ -66,7 +66,7 @@ pub trait DatabaseExt {
     fn get_tab(&self, packageurl: &str, taburl: &str) -> Tab;
     fn update_user_package(&mut self, userurl: &str, packageurl: &str) -> Result<Option<User>, Box<dyn Error>>;
     fn remove_user(&mut self, userurl: &str) -> Result<Option<User>, Box<dyn Error>>;
-    fn get_skill(&self, skill: &str) -> Skill;
+    fn get_skill(&self, skill: &str) -> Option<Skill>;
     fn sync_docs(&mut self);
 }
 
@@ -177,11 +177,10 @@ impl DatabaseExt for State<'_, Database> {
         let user: Option<User> = self.users.remove(userurl)?.map(|b: IVec| User::from(b));
         Ok(user)
     }
-    fn get_skill(&self, skill: &str) -> Skill {
-        self.skills.read().unwrap().clone().into_iter().find(|x| x.url == skill).unwrap_or(Skill {
-            url: "NaN".to_string(),
-            content: "skill does not exist in DB yet".to_string(),
-        }).clone()
+    fn get_skill(&self, skill: &str) -> Option<Skill> {
+        let skill = self.skills.read().unwrap().clone().into_iter().find(|x| x.url == skill).clone();
+
+        skill
     }
     fn sync_docs(&mut self) {
         let skillsurl = "https://skilltreedocs.onrender.com/skills";

@@ -6,6 +6,7 @@ use crate::core::Skill;
 use crate::core::User;
 use rocket::response::{Flash, Redirect};
 use rocket::Route;
+use std::fs;
 use rocket::State;
 use rocket::Response;
 use rocket::http::Status;
@@ -97,6 +98,10 @@ fn skill_details(db: State<Database>, s: String) -> rocket::response::content::H
     let skill = db.get_skill(&s);
     context.insert("skill", &s);
     tera.add_template_file("./templates/docs.html.tera", Some("docs")).unwrap();
-    tera.add_raw_template("skill", &skill.content).unwrap();
+    let missing_skill = Skill {
+        content: include_str!("../../templates/missing.html.tera").into(),
+        url: s,
+    };
+    tera.add_raw_template("skill", &skill.unwrap_or(missing_skill).content).unwrap();
     rocket::response::content::Html(tera.render("skill", &context).unwrap())
 }
