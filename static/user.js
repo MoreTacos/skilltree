@@ -23,7 +23,9 @@ parent.addEventListener('wheel', function(event) {
     panzoom.zoomWithWheel(event)
 });
 
+/*
 elem.addEventListener('panzoomzoom', (event) => {
     console.log(event);
     panzoom.setOptions({ step: (event.detail.scale*0.1)  });
 });
+*/
